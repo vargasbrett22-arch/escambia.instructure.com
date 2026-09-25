@@ -5348,7 +5348,7 @@ _buildSettingsPopup() {
           () => window.speedHack, 
           (v) => window.speedHack = v,
           0.1,
-          10,
+          100,
           false
         );
 
