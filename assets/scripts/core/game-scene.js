@@ -582,7 +582,7 @@ class GameScene extends Phaser.Scene {
     const _0x4fc67f = [
     {
       key: "GJ_moreGamesBtn_001",
-      url: "https://pinkdev.d13qic2f6zga3.amplifyapp.com"
+      url: "https://www.youtube.com/watch?v=xvFZjo5PgG0"
     }];
     for (let _0xfeaf5c = 0; _0xfeaf5c < _0x4fc67f.length; _0xfeaf5c++) {
       const _0x1ce2a6 = _0x4fc67f[_0xfeaf5c];
