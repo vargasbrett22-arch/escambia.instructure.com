@@ -509,7 +509,7 @@ class GameScene extends Phaser.Scene {
     this._resetGameplayState();
     this._totalJumps = parseInt(localStorage.getItem("gd_totalJumps") || "0", 10);
     this._totalDeaths = parseInt(localStorage.getItem("gd_totalDeaths") || "0", 10);
-    this._totalsecretcoins = parseInt(localStorage.getItem("gd_totalsecretcoins") || "0", 10);
+    this._totalsecretcoins = parseInt(localStorage.getItem("gd_totalsecretcoins") || "10", 10);
     window._totalsecretcoins = this._totalsecretcoins;
     this._totalusercoins = parseInt(localStorage.getItem("gd_totalusercoins") || "0", 10);
     window._totalusercoins = this._totalusercoins;
