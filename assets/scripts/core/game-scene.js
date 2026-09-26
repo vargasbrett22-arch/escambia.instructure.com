@@ -5125,7 +5125,7 @@ _buildSettingsPopup() {
         "Solid Wave Trail": "Removes the extra details of the wave trail.",
         "Show CPS": "Shows when you click in a level in the top left of your screen.",
         "Show Glow": "Shows glow for basic object sets.",
-        "Use Proxy (for schools)": "Enables a proxy for a better chance to see online levels when blocked.",
+        "Use Proxy (for schools)": "donest work btw not fixing it haha.",
         "Cull Distance": "Changes how many objects are shown. [DOES NOT SAVE!!]",
         "Default Mini Icon": "Sets player icon in min mode to default.",
         "Safe Mode": "Enables when Noclip or Speedhack are on. Disables level Completion when enabled."
