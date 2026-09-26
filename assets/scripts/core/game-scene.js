@@ -4398,7 +4398,7 @@ this._menuUpdateLogBtn = this.add.image(screenWidth - 30 - 50, 33, "GJ_WebSheet"
         "level_56199846": "diffIcon_04_btn_001",
         "level_23":       "diffIcon_10_btn_001",
         "level_3434":     "diffIcon_07_btn_001",
-        "level_5555":     "diffIcon_01_btn_001",
+        "level_5555":     "diffIcon_00_btn_001",
       };
       const diffIconKey = levelDifficultyMap[levelId] || "diffIcon_05_btn_001";
       const diffFrame = diffIconKey + ".png";
