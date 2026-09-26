@@ -160,6 +160,12 @@ window.allLevels = [
         "Every End",
         "level_99",
         ["MindCap", "Dimrain47"]
+    ],
+    [
+        "nuke_powder",
+        "Nuke Powder",
+        "201391",
+        ["Creator", "Artist"]
     ],/*
     [
         "dash",
