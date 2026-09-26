@@ -5053,7 +5053,7 @@ _buildSettingsPopup() {
         this._settingsPopup = null;
     });
 
-    const pages = ["Gameplay", "Visual", "Advanced", "Performance"];
+    const pages = ["Mod menu", "Visual", "Advanced", "Performance"];
     let currentPage = 0;
     const pageTitle = this.add.bitmapText(0, -(panelHeight / 2) + 45, "bigFont", pages[currentPage], 40).setOrigin(0.5);
     innerContainer.add(pageTitle);
