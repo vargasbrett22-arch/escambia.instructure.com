@@ -4397,7 +4397,7 @@ this._menuUpdateLogBtn = this.add.image(screenWidth - 30 - 50, 33, "GJ_WebSheet"
         "level_4284013": "diffIcon_06_btn_001",
         "level_56199846": "diffIcon_04_btn_001",
         "level_23":       "diffIcon_10_btn_001",
-        "level_3434":     "diffIcon_auto_btn_001.png",
+        "level_3434":     "diffIcon_07_btn_001",
         "level_5555":     "diffIcon_00_btn_001",
         "level_201391":   "diffIcon_04_btn_001",
       };
