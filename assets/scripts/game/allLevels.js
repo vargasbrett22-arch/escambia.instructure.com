@@ -126,6 +126,12 @@ window.allLevels = [
         ["RobTop", "MDK"]
     ],
     [
+        "cycles_x",
+        "Cycles X Layout",
+        "level_4929838",
+        ["Brett", "Custom"]
+    ],
+    [
         "nine_circles",
         "Nine Circles",
         "level_4284013",
