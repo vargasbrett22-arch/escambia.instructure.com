@@ -5350,8 +5350,8 @@ _buildSettingsPopup() {
         createNumberInput(container, column2X, startY, "Speedhack", 
           () => window.speedHack, 
           (v) => window.speedHack = v,
-          0.1,
-          100,
+          0.001,
+          300,
           false
         );
 
