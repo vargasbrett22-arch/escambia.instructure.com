@@ -1,10 +1,10 @@
 // editable config stuff 
 
 if (window.mainColor == null) {
-  window.mainColor = parseInt(localStorage.getItem("iconMainColor") || "04FF00", 16);
+  window.mainColor = parseInt(localStorage.getItem("iconMainColor") || "FFFFFF", 16);
 }
 if (window.secondaryColor == null) {
-  window.secondaryColor = parseInt(localStorage.getItem("iconSecondaryColor") || "00FBFF", 16);
+  window.secondaryColor = parseInt(localStorage.getItem("iconSecondaryColor") || "00BFFF", 16);
 }
 window.currentPlayer = localStorage.getItem("iconCurrentPlayer") || "player_02";
 window.currentShip   = localStorage.getItem("iconCurrentShip")   || "ship_01";
