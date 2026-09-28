@@ -6,11 +6,11 @@ if (window.mainColor == null) {
 if (window.secondaryColor == null) {
   window.secondaryColor = parseInt(localStorage.getItem("iconSecondaryColor") || "00FBFF", 16);
 }
-window.currentPlayer = localStorage.getItem("iconCurrentPlayer") || "player_01";
+window.currentPlayer = localStorage.getItem("iconCurrentPlayer") || "player_02";
 window.currentShip   = localStorage.getItem("iconCurrentShip")   || "ship_01";
 window.currentBall   = localStorage.getItem("iconCurrentBall")   || "player_ball_01";
 window.currentWave   = localStorage.getItem("iconCurrentWave")   || "dart_01";
-window.currentSpider = localStorage.getItem("iconCurrentSpider") || "spider_01";
+window.currentSpider = localStorage.getItem("iconCurrentSpider") || "spider_03";
 window.currentBird   = localStorage.getItem("iconCurrentBird")   || "bird_01";
 const storedUseDirectInternet = localStorage.getItem("gd_useDirectInternet");
 window.useDirectInternet = storedUseDirectInternet === null ? true : storedUseDirectInternet === "true";
