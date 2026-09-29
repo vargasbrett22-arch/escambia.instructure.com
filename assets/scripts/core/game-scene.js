@@ -5110,7 +5110,7 @@ _buildSettingsPopup() {
         "Enable Orb Guide": "Enables extra indicators on orbs.",
         "Practice Music Bypass": "Plays normal mode music in practice mode.",
         "Show Percentage": "Shows the percentage you are at in a level.",
-        "Percentage Decimals": "Shows decimals in level progress.",
+        "Instant Respawn": "Respawns you almost instantly after dying.",
         "Startpos Switcher": "Switches between start positions in a level.",
         "Noclip": "Allows you to phase throught mostly anything that would kill you normally.",
         "Noclip Accuracy": "Flashes your screen red when you would've died with noclip.",
@@ -5294,13 +5294,13 @@ _buildSettingsPopup() {
             "Show Percentage"
         );
 
-        createToggle(container, column1X, startY + spacingY, "Percentage Decimals", 
+        createToggle(container, column1X, startY + spacingY, "Instant Respawn", 
             () => window.percentageDecimals, 
             (v) => window.percentageDecimals = v,
             undefined,
             undefined,
             true,
-            "Percentage Decimals"
+            "Instant Respawn"
         );
 
         createToggle(container, column1X, startY + (spacingY * 2), "StartPos Switcher", 
@@ -8295,7 +8295,7 @@ _showwippopup() {
         }
       }
       this._deathTimer += deltaTime;
-      let _0x237728 = this._hadNewBest ? 1400 : 1000;
+      let _0x237728 = this._hadNewBest ? 1400 : (window.percentageDecimals ? 0 : 1000);
       if (this._deathTimer > _0x237728) {
         if (this._practicedMode.practiceMode) {
           this._respawnFromCheckpoint();
