@@ -114,12 +114,6 @@ window.allLevels = [
         ["RobTop", "Waterflame"]
     ],
     [
-        "deadlocked",
-        "Deadlocked",
-        "level_20",
-        ["RobTop", "F-777"]
-    ],
-    [
         "fingerdash",
         "Fingerdash",
         "level_21",
