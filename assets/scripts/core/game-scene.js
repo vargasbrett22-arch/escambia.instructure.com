@@ -5108,6 +5108,7 @@ _buildSettingsPopup() {
     var infotextstrings = {
         "Enable Portal Guide": "Enables extra indicators on portals.",
         "Enable Orb Guide": "Enables extra indicators on orbs.",
+        "Rainbow Icon": "Cycles your icon's colors in every gamemode.",
         "Practice Music Bypass": "Plays normal mode music in practice mode.",
         "Show Percentage": "Shows the percentage you are at in a level.",
         "Instant Respawn": "Respawns you almost instantly after dying.",
@@ -5366,6 +5367,18 @@ _buildSettingsPopup() {
             true,
             "Practice Music Bypass"
         );
+
+        createToggle(container, column2X, startY + (spacingY * 2), "Rainbow Icon",
+            () => window.rainbowIcon,
+            (v) => {
+                window.rainbowIcon = v;
+                if (!v) this._restorePlayerColors();
+            },
+            null,
+            20,
+            true,
+            "Rainbow Icon"
+        );
     };
 
     const buildVisualPage = (container) => {
@@ -5555,6 +5568,7 @@ _buildSettingsPopup() {
         showCPS: window.showCPS,
         speedHack: window.speedHack,
         macroBot: window.macroBot,
+        rainbowIcon: window.rainbowIcon,
         practiceMusicSync: window.practiceMusicSync,
         showGlow: window.showGlow,
         showEditorGlow: window.showEditorGlow,
@@ -5587,6 +5601,7 @@ _buildSettingsPopup() {
         showCPS: false,
         speedHack: 1.0,
         macroBot: false,
+        rainbowIcon: false,
         practiceMusicSync: false,
         showGlow: true,
         showEditorGlow: false,
@@ -5613,6 +5628,7 @@ _buildSettingsPopup() {
     window.showCPS = data.showCPS;
     window.speedHack = data.speedHack;
     window.macroBot = data.macroBot;
+    window.rainbowIcon = !!data.rainbowIcon;
     window.practiceMusicSync = !!data.practiceMusicSync;
     window.showGlow = data.showGlow;
     window.showEditorGlow = data.showEditorGlow;
@@ -7226,6 +7242,56 @@ _showwippopup() {
     this._macroBot = new MacroBot(this);
     window.macroBot = this._macroBot;
   }
+  _forEachPlayerLayerSprite(callback) {
+    for (const p of [this._player, this._player2]) {
+      if (!p) continue;
+      const layerProps = [
+        "_playerSpriteLayer", "_playerGlowLayer", "_playerOverlayLayer", "_playerExtraLayer",
+        "_shipSpriteLayer", "_shipGlowLayer", "_shipOverlayLayer", "_shipExtraLayer",
+        "_ballSpriteLayer", "_ballGlowLayer", "_ballOverlayLayer",
+        "_waveSpriteLayer", "_waveGlowLayer", "_waveOverlayLayer",
+        "_birdSpriteLayer", "_birdGlowLayer", "_birdOverlayLayer", "_birdExtraLayer"
+      ];
+      for (const lp of layerProps) callback(p[lp]?.sprite);
+      for (const layer of p._robotLayers || []) callback(layer?.sprite);
+      for (const layer of p._spiderLayers || []) callback(layer?.sprite);
+    }
+  }
+  _applyRainbowIcon(deltaTime) {
+    if (!window.rainbowIcon) return;
+    this._rainbowHue = (this._rainbowHue || 0) + deltaTime * 0.002;
+    const t = this._rainbowHue;
+    const r = Math.floor(128 + 127 * Math.sin(t));
+    const g = Math.floor(128 + 127 * Math.sin(t + 2.094));
+    const b = Math.floor(128 + 127 * Math.sin(t + 4.188));
+    const color = (r << 16) | (g << 8) | b;
+    this._forEachPlayerLayerSprite((sprite) => {
+      if (sprite && sprite.setTint) {
+        try { sprite.setTint(color); } catch (e) {}
+      }
+    });
+  }
+  _restorePlayerColors() {
+    const mainTintProps = ["_playerSpriteLayer", "_playerExtraLayer", "_shipSpriteLayer", "_ballSpriteLayer", "_waveSpriteLayer", "_birdSpriteLayer", "_birdExtraLayer"];
+    const secondaryTintProps = ["_playerGlowLayer", "_playerOverlayLayer", "_shipGlowLayer", "_shipOverlayLayer", "_shipExtraLayer", "_ballGlowLayer", "_ballOverlayLayer", "_waveGlowLayer", "_waveOverlayLayer", "_birdGlowLayer", "_birdOverlayLayer"];
+    for (const p of [this._player, this._player2]) {
+      if (!p) continue;
+      for (const lp of mainTintProps) {
+        const sprite = p[lp]?.sprite;
+        if (sprite && sprite.setTint) { try { sprite.setTint(window.mainColor); } catch (e) {} }
+      }
+      for (const lp of secondaryTintProps) {
+        const sprite = p[lp]?.sprite;
+        if (sprite && sprite.setTint) { try { sprite.setTint(window.secondaryColor); } catch (e) {} }
+      }
+      for (const layer of p._robotLayers || []) {
+        if (layer?.sprite?.setTint) { try { layer.sprite.setTint(window.mainColor); } catch (e) {} }
+      }
+      for (const layer of p._spiderLayers || []) {
+        if (layer?.sprite?.setTint) { try { layer.sprite.setTint(window.mainColor); } catch (e) {} }
+      }
+    }
+  }
   _startMacroRecording(meta = {}) {
     if (!this._macroBot) this._initMacroBot();
     this._macroBot.startRecording({
@@ -8049,6 +8115,8 @@ _showwippopup() {
     if (this._macroBtn){
       this._macroBtn.setVisible(window.macroBot);
     }
+
+    this._applyRainbowIcon(deltaTime);
 
     this._fpsAccum += deltaTime;
     this._fpsFrames++;
