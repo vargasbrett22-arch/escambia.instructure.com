@@ -3672,6 +3672,22 @@ this._menuUpdateLogBtn = this.add.image(screenWidth - 30 - 50, 33, "GJ_WebSheet"
       this.changeStartPos(1);
     });
 
+    this.input.keyboard.on('keydown-N', () => {
+      window.noClip = !window.noClip;
+    });
+
+    const _adjustSpeedHack = (delta) => {
+      const current = window.speedHack || 1;
+      let next = Math.round((current + delta) * 1000) / 1000;
+      next = Math.min(300, Math.max(0.001, next));
+      window.speedHack = next;
+      this._syncMusicRateToSpeed();
+    };
+    this.input.keyboard.on('keydown-PLUS', () => _adjustSpeedHack(0.25));
+    this.input.keyboard.on('keydown-NUMPAD_ADD', () => _adjustSpeedHack(0.25));
+    this.input.keyboard.on('keydown-MINUS', () => _adjustSpeedHack(-0.25));
+    this.input.keyboard.on('keydown-NUMPAD_SUBTRACT', () => _adjustSpeedHack(-0.25));
+
     this._percentageLabel = this.add.bitmapText(screenWidth / 2, 20, "bigFont", "0%", 30).setOrigin(0.5, 0.5);
     this._percentageLabel.setVisible(false);
     this._percentageLabel.setDepth(100);
@@ -3852,6 +3868,7 @@ this._menuUpdateLogBtn = this.add.image(screenWidth - 30 - 50, 33, "GJ_WebSheet"
           this._practiceModeBarContainer.setVisible(isPracticeMode);
         }
         this._audio.startMusic(this._getCurrentMusicSyncOffset());
+    this._syncMusicRateToSpeed();
       }
     });
     this._saveCheckpointKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
@@ -5109,6 +5126,7 @@ _buildSettingsPopup() {
         "Enable Portal Guide": "Enables extra indicators on portals.",
         "Enable Orb Guide": "Enables extra indicators on orbs.",
         "Rainbow Icon": "Cycles your icon's colors in every gamemode.",
+        "Jump Hack": "Lets you jump at any time, even mid-air.",
         "Practice Music Bypass": "Plays normal mode music in practice mode.",
         "Show Percentage": "Shows the percentage you are at in a level.",
         "Instant Respawn": "Respawns you almost instantly after dying.",
@@ -5347,7 +5365,7 @@ _buildSettingsPopup() {
 
         createNumberInput(container, column2X, startY, "Speedhack", 
           () => window.speedHack, 
-          (v) => window.speedHack = v,
+          (v) => { window.speedHack = v; this._syncMusicRateToSpeed(); },
           0.001,
           300,
           false
@@ -5378,6 +5396,15 @@ _buildSettingsPopup() {
             20,
             true,
             "Rainbow Icon"
+        );
+
+        createToggle(container, column2X, startY + (spacingY * 3), "Jump Hack",
+            () => window.jumpHack,
+            (v) => window.jumpHack = v,
+            null,
+            20,
+            true,
+            "Jump Hack"
         );
     };
 
@@ -5569,6 +5596,7 @@ _buildSettingsPopup() {
         speedHack: window.speedHack,
         macroBot: window.macroBot,
         rainbowIcon: window.rainbowIcon,
+        jumpHack: window.jumpHack,
         practiceMusicSync: window.practiceMusicSync,
         showGlow: window.showGlow,
         showEditorGlow: window.showEditorGlow,
@@ -5602,6 +5630,7 @@ _buildSettingsPopup() {
         speedHack: 1.0,
         macroBot: false,
         rainbowIcon: false,
+        jumpHack: false,
         practiceMusicSync: false,
         showGlow: true,
         showEditorGlow: false,
@@ -5629,6 +5658,7 @@ _buildSettingsPopup() {
     window.speedHack = data.speedHack;
     window.macroBot = data.macroBot;
     window.rainbowIcon = !!data.rainbowIcon;
+    window.jumpHack = !!data.jumpHack;
     window.practiceMusicSync = !!data.practiceMusicSync;
     window.showGlow = data.showGlow;
     window.showEditorGlow = data.showEditorGlow;
@@ -7181,7 +7211,7 @@ _showwippopup() {
       }
       const _dualImmediateBeforeGravity = !!this._state.gravityFlipped;
       let _primaryImmediateJumped = false;
-      if (!this._state.isFlying && !this._state.isWave && !this._state.isUfo && this._state.canJump) {
+      if (!this._state.isFlying && !this._state.isWave && !this._state.isUfo && (this._state.canJump || window.jumpHack)) {
         this._player.updateJump(0);
         _primaryImmediateJumped = true;
       } else if (this._state.isUfo) {
@@ -7206,7 +7236,7 @@ _showwippopup() {
         const _secondaryImmediateBeforeGravity = !!this._state2.gravityFlipped;
         const _secondaryImmediateBallInput = this._state2.isBall && this._state2.upKeyPressed;
         const _secondaryImmediateSpiderInput = this._state2.isSpider && this._state2.upKeyPressed;
-        if (!this._state2.isFlying && !this._state2.isWave && !this._state2.isUfo && this._state2.canJump) {
+        if (!this._state2.isFlying && !this._state2.isWave && !this._state2.isUfo && (this._state2.canJump || window.jumpHack)) {
           this._player2.updateJump(0);
         } else if (this._state2.isUfo) {
           if (!this._player2._shouldPrioritizeUfoOrbInput?.()) {
@@ -7237,6 +7267,26 @@ _showwippopup() {
     this._state2.upKeyPressed = false;
     this._state2.queuedHold = false;
     this._state2._orbActivationConsumedForPress = false;
+  }
+  _syncMusicRateToSpeed() {
+    const rate = window.speedHack || 1;
+    try {
+      if (typeof this._audio.setRate === "function") {
+        this._audio.setRate(rate);
+        return;
+      }
+      if (this._audio.music && typeof this._audio.music.setRate === "function") {
+        this._audio.music.setRate(rate);
+        return;
+      }
+      if (this._audio._music && typeof this._audio._music.setRate === "function") {
+        this._audio._music.setRate(rate);
+        return;
+      }
+      if (this._audio.sound && typeof this._audio.sound.rate !== "undefined") {
+        this._audio.sound.rate = rate;
+      }
+    } catch (e) {}
   }
   _initMacroBot() {
     this._macroBot = new MacroBot(this);
@@ -7270,6 +7320,13 @@ _showwippopup() {
         try { sprite.setTint(color); } catch (e) {}
       }
     });
+    if (this._iconGridObjects) {
+      for (const obj of this._iconGridObjects) {
+        if (obj && obj.setTint) {
+          try { obj.setTint(color); } catch (e) {}
+        }
+      }
+    }
   }
   _restorePlayerColors() {
     const mainTintProps = ["_playerSpriteLayer", "_playerExtraLayer", "_shipSpriteLayer", "_ballSpriteLayer", "_waveSpriteLayer", "_birdSpriteLayer", "_birdExtraLayer"];
@@ -8116,8 +8173,6 @@ _showwippopup() {
       this._macroBtn.setVisible(window.macroBot);
     }
 
-    this._applyRainbowIcon(deltaTime);
-
     this._fpsAccum += deltaTime;
     this._fpsFrames++;
     if (this._fpsAccum >= 250) {
@@ -8694,6 +8749,7 @@ _showwippopup() {
     if (this._isDual && !this._state2.isDead) {
       this._player2.syncSprites(this._cameraX, this._cameraY, deltaTime / 1000, this._getMirrorXOffset(playerScreenX));
     }
+    this._applyRainbowIcon(deltaTime);
     this._applyMirrorEffect();
   }
 
