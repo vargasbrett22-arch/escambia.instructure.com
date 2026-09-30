@@ -6666,7 +6666,7 @@ _showwippopup() {
     bounceContainer.add(openGroup);
     openBtn.on("pointerdown", () => { openGroup._pressed = true; this.tweens.killTweensOf(openGroup); this.tweens.add({ targets: openGroup, scaleX: 1.26, scaleY: 1.26, duration: 300, ease: "Bounce.Out" }); });
     openBtn.on("pointerout", () => { if (openGroup._pressed) { openGroup._pressed = false; this.tweens.killTweensOf(openGroup); this.tweens.add({ targets: openGroup, scaleX: 1, scaleY: 1, duration: 400, ease: "Bounce.Out" }); } });
-    openBtn.on("pointerup", () => { if (openGroup._pressed) { openGroup._pressed = false; this.tweens.killTweensOf(openGroup); openGroup.setScale(1); this._closeNewgroundsPopup(); window.open("https://www.newgrounds.com/audio", "_blank"); } });
+    openBtn.on("pointerup", () => { if (openGroup._pressed) { openGroup._pressed = false; this.tweens.killTweensOf(openGroup); openGroup.setScale(1); this._closeNewgroundsPopup(); window.open("https://sites.google.com/ecsd.me/webdasherslist/home", "_blank"); } });
     this.tweens.add({
       targets: bounceContainer,
       scale: { from: 0, to: 1 },
