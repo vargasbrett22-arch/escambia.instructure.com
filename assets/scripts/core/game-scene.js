@@ -3676,11 +3676,31 @@ this._gKey.on("down", () => {
       if (!window.startPosSwitcher) return;
       this.changeStartPos(1);
     });
-
+// Inside GameScene create() method... 
+     
+    // Key handler to listen for 'G' key press and update speed/pitch 
+    this.input.keyboard.on('keydown-G', () => { 
+      // Set the player and game speed to 1.09 
+      playerSpeed = 1.09; 
+ 
+      // Sync the music pitch / playback rate with the new speed if audio is playing 
+      if (this._audio && this._audio.currentSong) { 
+        if (this._audio.currentSong.setRate) { 
+          this._audio.currentSong.setRate(1.09); 
+        } else if (this._audio.currentSong.rate !== undefined) { 
+          this._audio.currentSong.rate = 1.09; 
+        } 
+      } else if (this.sound && this.sound.get) { 
+        // Fallback for Phaser sound instances 
+        const currentMusic = this.sound.getAllPlaying()[0]; 
+        if (currentMusic) { 
+          currentMusic.setRate(1.09); 
+        } 
+      } 
+    }); in what line do i add it in
     this.input.keyboard.on('keydown-N', () => {
       window.noClip = !window.noClip;
     });
-
     const _adjustSpeedHack = (delta) => {
       const current = window.speedHack || 1;
       let next = Math.round((current + delta) * 1000) / 1000;
