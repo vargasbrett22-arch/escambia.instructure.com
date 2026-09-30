@@ -3650,20 +3650,15 @@ this._menuUpdateLogBtn = this.add.image(screenWidth - 30 - 50, 33, "GJ_WebSheet"
   if (this._lvlEditDecor) this._lvlEditDecor.destroy();
   this._lvlEditDecor = this.add.image(this._creatorBtn.x + 110, this._creatorBtn.y - (this._creatorBtn.height * this._creatorBtn.scaleY) / 2 + 160, "GJ_GameSheet03", "GJ_lvlEdit_001.png").setScrollFactor(0).setDepth(31);
 }
-   this._spaceWasDown = false;
-this._spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-this._upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
-this._wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-this._lKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L);
-this._leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-this._rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-this._aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-this._dKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
-
-this._gKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
-this._gKey.on("down", () => {
-  playerSpeed = 1.093939;
-});
+    this._spaceWasDown = false;
+    this._spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+    this._upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+    this._wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+    this._lKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L);
+    this._leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+    this._rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+    this._aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+    this._dKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
 
     this._startPosIndex = -1;
 
@@ -3676,31 +3671,11 @@ this._gKey.on("down", () => {
       if (!window.startPosSwitcher) return;
       this.changeStartPos(1);
     });
-// Inside GameScene create() method... 
-     
-    // Key handler to listen for 'G' key press and update speed/pitch 
-    this.input.keyboard.on('keydown-G', () => { 
-      // Set the player and game speed to 1.09 
-      playerSpeed = 1.09; 
- 
-      // Sync the music pitch / playback rate with the new speed if audio is playing 
-      if (this._audio && this._audio.currentSong) { 
-        if (this._audio.currentSong.setRate) { 
-          this._audio.currentSong.setRate(1.09); 
-        } else if (this._audio.currentSong.rate !== undefined) { 
-          this._audio.currentSong.rate = 1.09; 
-        } 
-      } else if (this.sound && this.sound.get) { 
-        // Fallback for Phaser sound instances 
-        const currentMusic = this.sound.getAllPlaying()[0]; 
-        if (currentMusic) { 
-          currentMusic.setRate(1.09); 
-        } 
-      } 
-    }); in what line do i add it in
+
     this.input.keyboard.on('keydown-N', () => {
       window.noClip = !window.noClip;
     });
+
     const _adjustSpeedHack = (delta) => {
       const current = window.speedHack || 1;
       let next = Math.round((current + delta) * 1000) / 1000;
