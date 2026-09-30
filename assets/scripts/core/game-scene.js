@@ -6632,7 +6632,7 @@ _showwippopup() {
     const cornerRadius = this.textures.get("square01_001").source[0].width * 0.325;
     const panelBg = this._drawScale9(0, 0, 460, 240, "square01_001", cornerRadius, 16777215, 1);
     bounceContainer.add(panelBg);
-    const title = this.add.bitmapText(0, -76, "goldFont", "Newgrounds", 40).setOrigin(0.5, 0.5);
+    const title = this.add.bitmapText(0, -76, "goldFont", "Brett demon list?", 40).setOrigin(0.5, 0.5);
     bounceContainer.add(title);
     const body = this.add.text(0, -10, "Visit Brett dahsers demon list to find top\n6?", {
       fontSize: "25px",
