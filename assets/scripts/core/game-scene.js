@@ -6634,7 +6634,7 @@ _showwippopup() {
     bounceContainer.add(panelBg);
     const title = this.add.bitmapText(0, -76, "goldFont", "Newgrounds", 40).setOrigin(0.5, 0.5);
     bounceContainer.add(title);
-    const body = this.add.text(0, -10, "Visit Newgrounds to find awesome\nmusic?", {
+    const body = this.add.text(0, -10, "Visit Brett dahsers demon list to find top\n6?", {
       fontSize: "25px",
       fontFamily: "Arial, sans-serif",
       color: "#ffffff",
