@@ -3683,6 +3683,10 @@ this._menuUpdateLogBtn = this.add.image(screenWidth - 30 - 50, 33, "GJ_WebSheet"
       window.speedHack = next;
       this._syncMusicRateToSpeed();
     };
+    this.input.keyboard.on('keydown-Z', () => {
+      window.speedHack = 1.093939;
+      this._syncMusicRateToSpeed();
+    });
     this.input.keyboard.on('keydown-PLUS', () => _adjustSpeedHack(0.25));
     this.input.keyboard.on('keydown-NUMPAD_ADD', () => _adjustSpeedHack(0.25));
     this.input.keyboard.on('keydown-MINUS', () => _adjustSpeedHack(-0.25));
@@ -6632,9 +6636,9 @@ _showwippopup() {
     const cornerRadius = this.textures.get("square01_001").source[0].width * 0.325;
     const panelBg = this._drawScale9(0, 0, 460, 240, "square01_001", cornerRadius, 16777215, 1);
     bounceContainer.add(panelBg);
-    const title = this.add.bitmapText(0, -76, "goldFont", "Brett demon list?", 40).setOrigin(0.5, 0.5);
+    const title = this.add.bitmapText(0, -76, "goldFont", "Newgrounds", 40).setOrigin(0.5, 0.5);
     bounceContainer.add(title);
-    const body = this.add.text(0, -10, "Visit Brett dahsers demon list to find top\n6?", {
+    const body = this.add.text(0, -10, "Visit Newgrounds to find awesome\nmusic?", {
       fontSize: "25px",
       fontFamily: "Arial, sans-serif",
       color: "#ffffff",
@@ -6666,7 +6670,7 @@ _showwippopup() {
     bounceContainer.add(openGroup);
     openBtn.on("pointerdown", () => { openGroup._pressed = true; this.tweens.killTweensOf(openGroup); this.tweens.add({ targets: openGroup, scaleX: 1.26, scaleY: 1.26, duration: 300, ease: "Bounce.Out" }); });
     openBtn.on("pointerout", () => { if (openGroup._pressed) { openGroup._pressed = false; this.tweens.killTweensOf(openGroup); this.tweens.add({ targets: openGroup, scaleX: 1, scaleY: 1, duration: 400, ease: "Bounce.Out" }); } });
-    openBtn.on("pointerup", () => { if (openGroup._pressed) { openGroup._pressed = false; this.tweens.killTweensOf(openGroup); openGroup.setScale(1); this._closeNewgroundsPopup(); window.open("https://sites.google.com/ecsd.me/webdasherslist/home", "_blank"); } });
+    openBtn.on("pointerup", () => { if (openGroup._pressed) { openGroup._pressed = false; this.tweens.killTweensOf(openGroup); openGroup.setScale(1); this._closeNewgroundsPopup(); window.open("https://www.newgrounds.com/audio", "_blank"); } });
     this.tweens.add({
       targets: bounceContainer,
       scale: { from: 0, to: 1 },
