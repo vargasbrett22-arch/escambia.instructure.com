@@ -3650,15 +3650,20 @@ this._menuUpdateLogBtn = this.add.image(screenWidth - 30 - 50, 33, "GJ_WebSheet"
   if (this._lvlEditDecor) this._lvlEditDecor.destroy();
   this._lvlEditDecor = this.add.image(this._creatorBtn.x + 110, this._creatorBtn.y - (this._creatorBtn.height * this._creatorBtn.scaleY) / 2 + 160, "GJ_GameSheet03", "GJ_lvlEdit_001.png").setScrollFactor(0).setDepth(31);
 }
-    this._spaceWasDown = false;
-    this._spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
-    this._upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
-    this._wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
-    this._lKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L);
-    this._leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
-    this._rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
-    this._aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
-    this._dKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+   this._spaceWasDown = false;
+this._spaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
+this._upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+this._wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+this._lKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.L);
+this._leftKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.LEFT);
+this._rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
+this._aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
+this._dKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+
+this._gKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.G);
+this._gKey.on("down", () => {
+  playerSpeed = 1.093939;
+});
 
     this._startPosIndex = -1;
 
