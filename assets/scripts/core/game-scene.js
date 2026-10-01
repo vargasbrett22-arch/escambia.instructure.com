@@ -415,6 +415,9 @@ class GameScene extends Phaser.Scene {
     this._player = new PlayerObject(this, this._state, this._level);
     this._player._activationKey = "main";
     this._state2 = new PlayerState();
+    this._randomGamemodePortalActive = new Set();
+    this._randomGamemodePreviousWorldX = null;
+    this._randomGamemodePreviousWorldY = null;
     this._player2 = new PlayerObject(this, this._state2, this._level);
     this._player2._activationKey = "dual";
     this._player2.setInvertedColors?.(true);
@@ -627,8 +630,8 @@ this._menuUpdateLogBtn = this.add.image(screenWidth - 30 - 50, 33, "GJ_WebSheet"
     this._menuNewgroundsBtn = this.add.image(centerX + 312, screenHeight - 90, "GJ_GameSheet03", "GJ_ngBtn_001.png").setScrollFactor(0).setDepth(30).setInteractive();
     this._expandHitArea(this._menuNewgroundsBtn, 1);
     this._makeBouncyButton(this._menuNewgroundsBtn, 1, () => {
-      this._buildNewgroundsPopup();
-    }, () => this._menuActive && !this._newgroundsPopup);
+      window.open("https://sites.google.com/ecsd.me/webdasherslist/home", "_blank");
+    }, () => this._menuActive);
     this._menuGlitter = this.add.particles(0, 0, "GJ_WebSheet", {
       frame: "square.png",
       speed: 0,
@@ -3872,7 +3875,8 @@ this._menuUpdateLogBtn = this.add.image(screenWidth - 30 - 50, 33, "GJ_WebSheet"
           this._practiceModeBarContainer.setVisible(isPracticeMode);
         }
         this._audio.startMusic(this._getCurrentMusicSyncOffset());
-    this._syncMusicRateToSpeed();
+        this._syncMusicRateToSpeed();
+        setTimeout(() => this._syncMusicRateToSpeed(), 50);
       }
     });
     this._saveCheckpointKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.Z);
@@ -5130,7 +5134,7 @@ _buildSettingsPopup() {
         "Enable Portal Guide": "Enables extra indicators on portals.",
         "Enable Orb Guide": "Enables extra indicators on orbs.",
         "Rainbow Icon": "Cycles your icon's colors in every gamemode.",
-        "Jump Hack": "Lets you jump at any time, even mid-air.",
+        "Random Gamemode": "Makes every gamemode portal randomly choose a gamemode.",
         "Practice Music Bypass": "Plays normal mode music in practice mode.",
         "Show Percentage": "Shows the percentage you are at in a level.",
         "Instant Respawn": "Respawns you almost instantly after dying.",
@@ -5402,13 +5406,13 @@ _buildSettingsPopup() {
             "Rainbow Icon"
         );
 
-        createToggle(container, column2X, startY + (spacingY * 3), "Jump Hack",
-            () => window.jumpHack,
-            (v) => window.jumpHack = v,
+        createToggle(container, column2X, startY + (spacingY * 3), "Random Gamemode",
+            () => window.randomGamemode,
+            (v) => window.randomGamemode = v,
             null,
             20,
             true,
-            "Jump Hack"
+            "Random Gamemode"
         );
     };
 
@@ -5600,7 +5604,7 @@ _buildSettingsPopup() {
         speedHack: window.speedHack,
         macroBot: window.macroBot,
         rainbowIcon: window.rainbowIcon,
-        jumpHack: window.jumpHack,
+        randomGamemode: window.randomGamemode,
         practiceMusicSync: window.practiceMusicSync,
         showGlow: window.showGlow,
         showEditorGlow: window.showEditorGlow,
@@ -5624,7 +5628,7 @@ _buildSettingsPopup() {
         showHitboxes: false,
         startPosSwitcher: false,
         hitboxTrail: false,
-        showFPS: false,
+        showFPS: true,
         solidWaveTrail: false,
         noclipAccuracy: false,
         hitboxesOnDeath: false,
@@ -5634,8 +5638,8 @@ _buildSettingsPopup() {
         speedHack: 1.0,
         macroBot: false,
         rainbowIcon: false,
-        jumpHack: false,
-        practiceMusicSync: false,
+        randomGamemode: false,
+        practiceMusicSync: true,
         showGlow: true,
         showEditorGlow: false,
         useDirectInternet: true,
@@ -5662,7 +5666,7 @@ _buildSettingsPopup() {
     window.speedHack = data.speedHack;
     window.macroBot = data.macroBot;
     window.rainbowIcon = !!data.rainbowIcon;
-    window.jumpHack = !!data.jumpHack;
+    window.randomGamemode = data.randomGamemode !== false;
     window.practiceMusicSync = !!data.practiceMusicSync;
     window.showGlow = data.showGlow;
     window.showEditorGlow = data.showEditorGlow;
@@ -7215,7 +7219,7 @@ _showwippopup() {
       }
       const _dualImmediateBeforeGravity = !!this._state.gravityFlipped;
       let _primaryImmediateJumped = false;
-      if (!this._state.isFlying && !this._state.isWave && !this._state.isUfo && (this._state.canJump || window.jumpHack)) {
+      if (!this._state.isFlying && !this._state.isWave && !this._state.isUfo && (this._state.canJump)) {
         this._player.updateJump(0);
         _primaryImmediateJumped = true;
       } else if (this._state.isUfo) {
@@ -7240,7 +7244,7 @@ _showwippopup() {
         const _secondaryImmediateBeforeGravity = !!this._state2.gravityFlipped;
         const _secondaryImmediateBallInput = this._state2.isBall && this._state2.upKeyPressed;
         const _secondaryImmediateSpiderInput = this._state2.isSpider && this._state2.upKeyPressed;
-        if (!this._state2.isFlying && !this._state2.isWave && !this._state2.isUfo && (this._state2.canJump || window.jumpHack)) {
+        if (!this._state2.isFlying && !this._state2.isWave && !this._state2.isUfo && (this._state2.canJump)) {
           this._player2.updateJump(0);
         } else if (this._state2.isUfo) {
           if (!this._player2._shouldPrioritizeUfoOrbInput?.()) {
@@ -7632,6 +7636,9 @@ _showwippopup() {
         this._enableDualMode();
       }
       this._level.fastForwardTriggers(pos.x, this._colorManager);
+      this._randomGamemodePortalActive.clear();
+      this._randomGamemodePreviousWorldX = Number.isFinite(Number(this._playerWorldX)) ? Number(this._playerWorldX) : null;
+      this._randomGamemodePreviousWorldY = Number.isFinite(Number(startPosY)) ? Number(startPosY) : null;
       if (this._player) {
         this._player._lastCollisionWorldX = Number.isFinite(Number(this._playerWorldX)) ? Number(this._playerWorldX) : null;
         this._player._lastCollisionWorldY = startPosY;
@@ -7641,6 +7648,8 @@ _showwippopup() {
     this._practiceBypassPending = false;
     this._audio.reset();
     this._audio.startMusic(musicOffset);
+    this._syncMusicRateToSpeed();
+    setTimeout(() => this._syncMusicRateToSpeed(), 50);
     this._paused = false;
     if (this._pauseContainer) {
       this._pauseContainer.destroy();
@@ -7912,8 +7921,12 @@ _showwippopup() {
     this._practiceBypassPending = false;
     if (window.practiceMusicSync) {
       this._audio.startMusic(this._getSongOffsetForWorldX(checkpoint.x));
+      this._syncMusicRateToSpeed();
+      setTimeout(() => this._syncMusicRateToSpeed(), 50);
     } else if (!this._audio.musicPlaying) {
       this._audio.startMusic();
+      this._syncMusicRateToSpeed();
+      setTimeout(() => this._syncMusicRateToSpeed(), 50);
     }
 
     if (this._player && this._player._hitboxTrail) {
@@ -8298,6 +8311,8 @@ _showwippopup() {
         if (this._firstPlay) {
           this._firstPlay = false;
           this._audio.startMusic();
+          this._syncMusicRateToSpeed();
+          setTimeout(() => this._syncMusicRateToSpeed(), 50);
         }
         this._pauseBtn.setVisible(true).setAlpha(0);
         this.tweens.add({
@@ -8637,6 +8652,7 @@ _showwippopup() {
         this._macroBot.recordFrame(this._physicsFrame);
       }
     }
+    this._randomizeGamemodePortals();
     this._state.lastY = initialY;
     if (this._isDual) this._state2.lastY = initialY2;
     this._state.ignorePortals = false;
@@ -8806,22 +8822,92 @@ _applyMirrorEffect() {
   _getGamemodePortalMode(portalType) {
     switch (portalType) {
       case "portal_cube":
-        return "cube";
       case "portal_fly":
-        return "ship";
       case "portal_ball":
-        return "ball";
       case "portal_wave":
-        return "wave";
       case "portal_ufo":
-        return "ufo";
       case "portal_robot":
-        return "robot";
       case "portal_spider":
-        return "spider";
+        if (window.randomGamemode) {
+          const randomModes = ["cube", "ship", "ball", "ufo", "wave", "robot", "spider"];
+          return randomModes[Math.floor(Math.random() * randomModes.length)];
+        }
+        switch (portalType) {
+          case "portal_cube": return "cube";
+          case "portal_fly": return "ship";
+          case "portal_ball": return "ball";
+          case "portal_wave": return "wave";
+          case "portal_ufo": return "ufo";
+          case "portal_robot": return "robot";
+          case "portal_spider": return "spider";
+        }
+        break;
       default:
         return null;
     }
+  }
+  _randomizeGamemodePortals() {
+    if (!window.randomGamemode || !this._level || !this._player || this._state?.isDead || this._levelWon) return;
+
+    const worldX = Number(this._playerWorldX);
+    const worldY = Number(this._state?.y);
+    if (!Number.isFinite(worldX) || !Number.isFinite(worldY)) return;
+
+    const previousWorldX = Number.isFinite(this._randomGamemodePreviousWorldX)
+      ? this._randomGamemodePreviousWorldX
+      : worldX;
+    const previousWorldY = Number.isFinite(this._randomGamemodePreviousWorldY)
+      ? this._randomGamemodePreviousWorldY
+      : worldY;
+
+    const nearbyObjects = this._level.getNearbySectionObjects?.(worldX) || [];
+    const previousNearbyObjects = previousWorldX !== worldX
+      ? (this._level.getNearbySectionObjects?.(previousWorldX) || [])
+      : [];
+    const portalObjects = [...new Set([...nearbyObjects, ...previousNearbyObjects])];
+    const touchedNow = new Set();
+    const halfSize = this._state.isWave
+      ? (this._state.isMini ? 6 : 9)
+      : (this._state.isMini ? 18 : 30);
+
+    const gamemodePortalTypes = new Set([
+      "portal_cube", "portal_fly", "portal_ball", "portal_wave",
+      "portal_ufo", "portal_robot", "portal_spider"
+    ]);
+
+    for (const gameObj of portalObjects) {
+      if (!gameObj || !gamemodePortalTypes.has(gameObj.type)) continue;
+
+      let touching = false;
+      if (gameObj.hitbox_radius !== undefined && gameObj.hitbox_radius !== null) {
+        const radius = gameObj.hitbox_radius + halfSize;
+        const dx = worldX - gameObj.x;
+        const dy = worldY - gameObj.y;
+        touching = (dx * dx + dy * dy) <= radius * radius;
+
+        if (!touching && (previousWorldX !== worldX || previousWorldY !== worldY)) {
+          const prevDx = previousWorldX - gameObj.x;
+          const prevDy = previousWorldY - gameObj.y;
+          touching = (prevDx * prevDx + prevDy * prevDy) <= radius * radius;
+        }
+      } else if (typeof this._player._isPlayerTouchingPortalHitbox === "function") {
+        touching = this._player._isPlayerTouchingPortalHitbox(
+          gameObj, worldX, worldY, halfSize, previousWorldX, previousWorldY
+        );
+      }
+
+      if (!touching) continue;
+      touchedNow.add(gameObj);
+
+      if (!this._randomGamemodePortalActive.has(gameObj)) {
+        const mode = this._getGamemodePortalMode(gameObj.type);
+        if (mode) this._setPlayerGamemode(this._player, this._state, mode, true);
+      }
+    }
+
+    this._randomGamemodePortalActive = touchedNow;
+    this._randomGamemodePreviousWorldX = worldX;
+    this._randomGamemodePreviousWorldY = worldY;
   }
   _setPlayerGamemode(player, state, mode, keepVelocity = true) {
     if (!player || !state) return;
