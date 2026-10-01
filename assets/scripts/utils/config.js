@@ -7,7 +7,7 @@ if (window.secondaryColor == null) {
   window.secondaryColor = parseInt(localStorage.getItem("iconSecondaryColor") || "00BFFF", 16);
 }
 window.currentPlayer = localStorage.getItem("iconCurrentPlayer") || "player_02";
-window.currentShip   = localStorage.getItem("iconCurrentShip")   || "ship_01";
+window.currentShip   = localStorage.getItem("iconCurrentShip")   || "ship_09";
 window.currentBall   = localStorage.getItem("iconCurrentBall")   || "player_ball_01";
 window.currentWave   = localStorage.getItem("iconCurrentWave")   || "dart_01";
 window.currentSpider = localStorage.getItem("iconCurrentSpider") || "spider_03";
