@@ -124,67 +124,9 @@ class BootScene extends Phaser.Scene {
     const cy = H / 2;
 
     const LOADING_MESSAGES = [
-      "hehe iam a cute femboy :3",
       "Tip: press F to get the latest version",
       "micah has gingervists",
       "shoutout to wayong micah leland jospeh",
-      "leland x micah :3",
-      "brettini tuffini",
-      "jackson is geometry dash larper",
-      "B is the best levelini upini",
-      "hehe iam a cute femboy :3",
-      "Tip: press F to get the latest version",
-      "micah has gingervists",
-      "shoutout to wayong micah leland jospeh",
-      "leland x micah :3",
-      "brettini tuffini",
-      "jackson is geometry dash larper",
-      "B is the best levelini upini",
-      "hehe iam a cute femboy :3",
-      "Tip: press F to get the latest version",
-      "micah has gingervists",
-      "shoutout to wayong micah leland jospeh",
-      "leland x micah :3",
-      "brettini tuffini",
-      "jackson is geometry dash larper",
-      "B is the best levelini upini",
-      "hehe iam a cute femboy :3",
-      "Tip: press F to get the latest version",
-      "micah has gingervists",
-      "shoutout to wayong micah leland jospeh",
-      "leland x micah :3",
-      "brettini tuffini",
-      "jackson is geometry dash larper",
-      "B is the best levelini upini",
-      "hehe iam a cute femboy :3",
-      "Tip: press F to get the latest version",
-      "micah has gingervists",
-      "shoutout to wayong micah leland jospeh",
-      "leland x micah :3",
-      "brettini tuffini",
-      "jackson is geometry dash larper",
-      "B is the best levelini upini",
-      "hehe iam a cute femboy :3",
-      "Tip: press F to get the latest version",
-      "micah has gingervists",
-      "shoutout to wayong micah leland jospeh",
-      "leland x micah :3",
-      "brettini tuffini",
-      "jackson is geometry dash larper",
-      "B is the best levelini upini",
-      "hehe iam a cute femboy :3",
-      "Tip: press F to get the latest version",
-      "micah has gingervists",
-      "shoutout to wayong micah leland jospeh",
-      "leland x micah :3",
-      "brettini tuffini",
-      "jackson is geometry dash larper",
-      "B is the best levelini upini",
-      "hehe iam a cute femboy :3",
-      "Tip: press F to get the latest version",
-      "micah has gingervists",
-      "shoutout to wayong micah leland jospeh",
-      "leland x micah :3",
       "brettini tuffini",
       "jackson is geometry dash larper",
       "B is the best levelini upini",
@@ -194,7 +136,7 @@ class BootScene extends Phaser.Scene {
     ];
     const sliderOriginX = cx - 105;
     const sliderOriginY = cy + 110;
-    let sliderFill = null
+    let sliderFill = null;
 
     this.load.image("game_bg_01", "assets/game-bg/game_bg_01_001-hd.png");
     this.load.image("sliderBar", "assets/sprites/sliderBar.png");
@@ -224,7 +166,7 @@ class BootScene extends Phaser.Scene {
       }
       const msg = LOADING_MESSAGES[Math.floor(Math.random() * LOADING_MESSAGES.length)];
 
-      // Draw the message first, then detect special words and place icons on the same line.
+      // Draw the message text
       const loadingText = this.add.bitmapText(
         cx,
         cy + 187,
@@ -265,16 +207,33 @@ class BootScene extends Phaser.Scene {
           .setScale(0.55);
         }
       }
+
       // "iam crine" = RobTop-ahh cube icon BEFORE the message
       if (lowerMsg.includes("iam crine")) {
+        const iconScale = 0.55;
+        const iconWidth = 28; // Estimated width of scaled cube icon
+        const gap = 10;        // Spacing between the icon and text
+
+        // 1. Calculate combined width of Icon + Gap + Text
+        const totalWidth = iconWidth + gap + loadingText.width;
+
+        // 2. Determine left boundary to center the full line at cx
+        const startX = cx - (totalWidth / 2);
+
+        // 3. Place the cube icon at the beginning
         this.add.image(
-          cx - loadingText.width / 2 - 18,
+          startX + (iconWidth / 2),
           iconY,
           "GJ_GameSheetIcons",
           "player_04_001.png"
         )
         .setOrigin(0.5)
-        .setScale(0.55);
+        .setScale(iconScale);
+
+        // 4. Align text to start right after the icon
+        loadingText
+          .setOrigin(0, 0.5)
+          .setPosition(startX + iconWidth + gap, iconY);
       }
 
       const robtopLogo = this.add.image(cx, cy - 120, "GJ_LaunchSheet", "RobTopLogoBig_001.png").setOrigin(0.5).setScale(0.8);
