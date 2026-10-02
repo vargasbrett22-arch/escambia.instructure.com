@@ -189,7 +189,8 @@ class BootScene extends Phaser.Scene {
       "jackson is geometry dash larper",
       "B is the best levelini upini",
       "ok bro",
-      "iam a robot"
+      "iam a robot",
+      "iam crine"
     ];
     const sliderOriginX = cx - 105;
     const sliderOriginY = cy + 110;
@@ -207,6 +208,7 @@ class BootScene extends Phaser.Scene {
 
     // Load the difficulty icons early so they can be used by the loading message.
     this.load.atlas("GJ_GameSheet03", "assets/sheets/GJ_GameSheet03.png", "assets/sheets/GJ_GameSheet03.json");
+    this.load.atlas("GJ_GameSheetIcons", "assets/sheets/GJ_GameSheetIcons.png", "assets/sheets/GJ_GameSheetIcons.json");
     
     this.load.once("complete", () => {
       const tex = this.textures.get("game_bg_01");
@@ -263,6 +265,18 @@ class BootScene extends Phaser.Scene {
           .setScale(0.55);
         }
       }
+      // "iam crine" = RobTop-ahh cube icon BEFORE the message
+      if (lowerMsg.includes("iam crine")) {
+        this.add.image(
+          cx - loadingText.width / 2 - 18,
+          iconY,
+          "GJ_GameSheetIcons",
+          "player_04_001.png"
+        )
+        .setOrigin(0.5)
+        .setScale(0.55);
+      }
+
       const robtopLogo = this.add.image(cx, cy - 120, "GJ_LaunchSheet", "RobTopLogoBig_001.png").setOrigin(0.5).setScale(0.8);
       const gjLogo = this.add.image(cx, cy, "GJ_WebSheet", "gj_logo.png").setOrigin(0.5);
       const Logo = this.add.image(1015, 610, "Phaserlogo").setScale(0.115).setInteractive();
@@ -294,7 +308,6 @@ class BootScene extends Phaser.Scene {
       this.load.atlas("GJ_GameSheet04", "assets/sheets/GJ_GameSheet04.png", "assets/sheets/GJ_GameSheet04.json");
       this.load.atlas("GJ_GameSheetEditor", "assets/sheets/GJ_GameSheetEditor.png", "assets/sheets/GJ_GameSheetEditor.json");
       this.load.atlas("GJ_GameSheetGlow", "assets/sheets/GJ_GameSheetGlow.png", "assets/sheets/GJ_GameSheetGlow.json");
-      this.load.atlas("GJ_GameSheetIcons", "assets/sheets/GJ_GameSheetIcons.png", "assets/sheets/GJ_GameSheetIcons.json");
       this.load.atlas("Wavesheet", "assets/sheets/Wavesheet.png", "assets/sheets/Wavesheet.json");
       this.load.json("Spider_AnimDesc", "assets/sheets/Spider_AnimDesc.json");
       this.load.json("Robot_AnimDesc", "assets/sheets/Robot_AnimDesc.json");
