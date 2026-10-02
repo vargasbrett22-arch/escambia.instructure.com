@@ -132,7 +132,8 @@ class BootScene extends Phaser.Scene {
       "B is the best levelini upini",
       "ok bro",
       "iam a robot",
-      "iam crine"
+      "iam crine",
+      "me when i lie"
     ];
     const sliderOriginX = cx - 105;
     const sliderOriginY = cy + 110;
@@ -234,6 +235,37 @@ class BootScene extends Phaser.Scene {
         loadingText
           .setOrigin(0, 0.5)
           .setPosition(startX + iconWidth + gap, iconY);
+      }
+
+      // "me when i lie" = list of sprites following the message
+      if (lowerMsg.includes("me when i lie")) {
+        const icons = [
+          { sheet: "GJ_GameSheet03", key: "GJ_garageBtn_001.png" },
+          { sheet: "GJ_GameSheet03", key: "adRope_001.png" },
+          { sheet: "GJ_GameSheet03", key: "dailyLevelLabel_001.png" },
+          { sheet: "GJ_GameSheet03", key: "GJ_dislikesIcon_001.png" },
+          { sheet: "GJ_GameSheet03", key: "GJ_dislikesIcon_001.png" },
+          { sheet: "GJ_GameSheet03", key: "GJ_dislikesIcon_001.png" },
+          { sheet: "GJ_GameSheet03", key: "diffIcon_01_btn_001.png" },
+          { sheet: "GJ_GameSheet03", key: "diffIcon_01_btn_001.png" },
+          { sheet: "GJ_GameSheet03", key: "diffIcon_01_btn_001.png" },
+          { sheet: "GJ_GameSheet03", key: "GJ_bigMoon_001.png" },
+          { sheet: "GJ_GameSheet03", key: "GJ_bigMoon_001.png" },
+          { sheet: "GJ_GameSheet03", key: "GJ_rateDiffBtnMod_001.png" },
+          { sheet: "GJ_GameSheet03", key: "GJ_rateDiffBtnMod_001.png" }
+        ];
+
+        const spacing = 28;
+        for (let i = 0; i < icons.length; i++) {
+          this.add.image(
+            iconStartX + i * spacing,
+            iconY,
+            icons[i].sheet,
+            icons[i].key
+          )
+          .setOrigin(0.5)
+          .setScale(0.55);
+        }
       }
 
       const robtopLogo = this.add.image(cx, cy - 120, "GJ_LaunchSheet", "RobTopLogoBig_001.png").setOrigin(0.5).setScale(0.8);
