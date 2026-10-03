@@ -156,7 +156,7 @@ class BootScene extends Phaser.Scene {
     this.load.once("complete", () => {
       const tex = this.textures.get("game_bg_01");
       const s = Math.max(W / tex.source[0].width, H / tex.source[0].height);
-      const bg = this.add.image(cx, cy, "game_bg_01").setScale(s).setTint(0x0066ff);
+      const bg = this.add.image(cx, cy, "game_bg_01").setScale(s).setTint(0xFF7518);
       this.children.sendToBack(bg);
       sliderFill = this.add.tileSprite(sliderOriginX - 100, sliderOriginY - 2, 0, 14, "sliderBar");
       sliderFill.setOrigin(0, 0.5);
