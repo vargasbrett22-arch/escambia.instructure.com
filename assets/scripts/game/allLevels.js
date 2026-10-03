@@ -211,4 +211,3 @@ window.allLevels = [
     ]
     */
 ];
-```
