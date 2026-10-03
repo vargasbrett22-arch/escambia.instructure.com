@@ -1,4 +1,3 @@
-
 window.allLevels = [
     [
         "stereo_madness",
@@ -163,8 +162,8 @@ window.allLevels = [
         ["Creator", "Artist"]
     ],
     [
-        "getgjkey5",
-        "GetGJKey5",
+        "getgjkey",
+        "Get GJ Key",
         "level_9292",
         ["Creator", "Artist"]
     ], /*
