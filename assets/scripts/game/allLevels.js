@@ -1,3 +1,4 @@
+
 window.allLevels = [
     [
         "stereo_madness",
@@ -160,7 +161,13 @@ window.allLevels = [
         "Nuke Powder",
         "level_201391",
         ["Creator", "Artist"]
-    ],/*
+    ],
+    [
+        "getgjkey5",
+        "GetGJKey5",
+        "level_9292",
+        ["Creator", "Artist"]
+    ], /*
     [
         "dash",
         "Dash",
@@ -205,3 +212,4 @@ window.allLevels = [
     ]
     */
 ];
+```
