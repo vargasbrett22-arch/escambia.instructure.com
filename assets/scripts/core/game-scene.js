@@ -386,6 +386,7 @@ class MacroBot {
 }
 
 
+const VERITY_MENU_LOOP_KEY = "veitymenuloop";
 const KEYBIND_ACTIONS = [
   { id: "jump",             label: "Jump",           def: 32, icon: "PBtn_Jump_001.png" },
   { id: "restart",          label: "Restart",        def: 82, icon: "GJ_replayBtn_001.png" },
@@ -3983,6 +3984,7 @@ this._menuUpdateLogBtn = this.add.image(screenWidth - 30 - 50, 33, "GJ_WebSheet"
     };
     this._makeBouncyButton(this._leftBtn, 1, () => {window.leftbuttoncallback()}, () => this._menuActive);
     this._makeBouncyButton(this._rightBtn, 1, () => {window.rightbuttoncallback()}, () => this._menuActive);
+    window.verityMenuLoop = localStorage.getItem("verityMenuLoop") === "true";
     const menuMusicEnabled = localStorage.getItem("menuMusicEnabled");
     const shouldPlayMenuMusic = menuMusicEnabled === null ? true : menuMusicEnabled === "true";
     
@@ -5913,6 +5915,24 @@ _buildSettingsPopup() {
       ease: "Elastic.Out",
       easeParams: [1, 0.6]
     });
+  }
+  _setVerityMenuLoop(on) {
+    window.verityMenuLoop = !!on;
+    localStorage.setItem("verityMenuLoop", String(!!on));
+    const saved = localStorage.getItem("menuMusicEnabled");
+    const menuMusicOn = saved === null ? true : saved === "true";
+    const restart = () => {
+      if (!menuMusicOn || !this._menuActive) return;
+      if (this._audio.isplaying()) this._audio.stopMusic();
+      this._audio.startMenuMusic();
+    };
+    if (on && !this.cache.audio.exists(VERITY_MENU_LOOP_KEY)) {
+      this.load.audio(VERITY_MENU_LOOP_KEY, "assets/music/" + VERITY_MENU_LOOP_KEY + ".mp3");
+      this.load.once("complete", restart);
+      this.load.start();
+    } else {
+      restart();
+    }
   }
   _closeKeybindPopup() {
     if (!this._keybindPopup) return;
@@ -10324,6 +10344,17 @@ window.open("https://github.com/web-dashers/web-dashers.github.io", "_blank"); }
                 this._audio.stopMusic();
             }
         }
+    });
+    // Verity menu loop toggle (BPM button sprite)
+    const verityX = containerX - 280;
+    this._settingsLayerInternal.add(this.add.bitmapText(verityX, checkboxY - 42, "bigFont", "Verity", 20).setOrigin(0.5, 0.5));
+    this._settingsLayerInternal.add(this.add.bitmapText(verityX, checkboxY - 22, "bigFont", "Loop", 20).setOrigin(0.5, 0.5));
+    const verityTex = () => window.verityMenuLoop ? "GJ_BPMOnBtn_001.png" : "GJ_BPMOffBtn_001.png";
+    const verityBtn = this.add.image(verityX, checkboxY + 15, "GJ_GameSheet03", verityTex()).setScale(0.65).setInteractive();
+    this._settingsLayerInternal.add(verityBtn);
+    this._makeBouncyButton(verityBtn, 0.65, () => {
+        this._setVerityMenuLoop(!window.verityMenuLoop);
+        verityBtn.setTexture("GJ_GameSheet03", verityTex());
     });
     const _0x45fc2b = [{
       frame: "GJ_arrow_03_001.png",
