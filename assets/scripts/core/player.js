@@ -34,6 +34,8 @@ class PlayerState {
     this._orbActivationConsumedForPress = false;
     this.isDead = false;
     this.mirrored = false;
+    this.platformerFacing = 1;
+    this.platformerOnColliderSurface = false;
     this.isDashing = false;
     this.dashYVelocity = 0;
     this.isDual = false;
@@ -1800,6 +1802,7 @@ class PlayerObject {
     this.setSpiderVisible(true);
   }
   syncSprites(cameraX, cameraY, _0x3afedf, mirrorOffset) {
+    const platformerFacing = this._scene && this._scene._forcePlatformer ? (this.p.platformerFacing || 1) : 1;
     if (this._endAnimating) {
       return;
     }
@@ -1833,7 +1836,7 @@ if (this.p.isFlying || this.p.isUfo) {
             layer.sprite.y = _0x1a433c + _0x185f91 + (this.p.gravityFlipped ? (-20 * _miniS) : 0)
             layer.sprite.rotation = this.p.mirrored ? -playerRotation : playerRotation;
             layer.sprite.scaleY = this.p.gravityFlipped ? -_miniS : _miniS;
-            layer.sprite.scaleX = this.p.mirrored ? -_miniS : _miniS;
+            layer.sprite.scaleX = (this.p.mirrored ? -1 : 1) * _miniS * platformerFacing;
           }
         }
       }
@@ -1846,7 +1849,7 @@ if (this.p.isFlying || this.p.isUfo) {
             layer.sprite.rotation = this.p.mirrored ? -playerRotation : playerRotation;
             const _miniS = this.p.isMini ? 0.6 : 1;
             layer.sprite.scaleY = this.p.gravityFlipped ? -_miniS : _miniS;
-            layer.sprite.scaleX = this.p.mirrored ? -_miniS : _miniS;
+            layer.sprite.scaleX = (this.p.mirrored ? -1 : 1) * _miniS * platformerFacing;
           }
         }
       }
@@ -1859,7 +1862,7 @@ if (this.p.isFlying || this.p.isUfo) {
           playerLayerItem.sprite.rotation = this.p.mirrored ? -playerRotation : playerRotation;
           const _shipCubeS = _miniS * 0.55;
           playerLayerItem.sprite.scaleY = this.p.gravityFlipped ? -_shipCubeS : _shipCubeS;
-          playerLayerItem.sprite.scaleX = this.p.mirrored ? -_shipCubeS : _shipCubeS;
+          playerLayerItem.sprite.scaleX = (this.p.mirrored ? -1 : 1) * _shipCubeS * platformerFacing;
         }
       }
       if (_ufoMode) {
@@ -1913,7 +1916,7 @@ if (this.p.isFlying || this.p.isUfo) {
               _miniS *= 0.94; //fix wave size
             }
             playerLayer.sprite.scaleY = isBallLayer ? _miniS : (this.p.gravityFlipped ? -_miniS : _miniS);
-            playerLayer.sprite.scaleX = (this.p.mirrored ? -_miniS : _miniS);
+            playerLayer.sprite.scaleX = ((this.p.mirrored ? -1 : 1) * _miniS * platformerFacing);
         }
       }
       for (const layer of this._spiderLayers) {
@@ -1933,7 +1936,7 @@ if (this.p.isFlying || this.p.isUfo) {
               _miniS *= 0.94; //fix wave size
             }
             playerLayer.sprite.scaleY = isBallLayer ? _miniS : (this.p.gravityFlipped ? -_miniS : _miniS);
-            playerLayer.sprite.scaleX = (this.p.mirrored ? -_miniS : _miniS);
+            playerLayer.sprite.scaleX = ((this.p.mirrored ? -1 : 1) * _miniS * platformerFacing);
         }
       }
     }
@@ -4172,6 +4175,52 @@ if (this.p.isFlying || this.p.isUfo) {
     return false;
   }
 
+  getPlatformerHorizontalDelta(dx, worldX) {
+    if (!dx) return 0;
+    const playerSize = this.p.isMini ? 18 : 30;
+    const currentX = worldX;
+    const targetX = worldX + dx;
+    const playersY = this.p.y;
+    const nearbyObjects = this._gameLayer.getNearbySectionObjects(targetX);
+    let allowedDx = dx;
+
+    for (const gameObj of nearbyObjects) {
+      if (gameObj.type !== solidType || gameObj.objid === 143 || gameObj.hitbox_radius !== undefined && gameObj.hitbox_radius !== null) {
+        continue;
+      }
+
+      const rad = gameObj.rotationDegrees * Math.PI / 180;
+      const cos = Math.cos(rad);
+      const sin = Math.sin(rad);
+      const halfW = gameObj.w / 2;
+      const halfH = gameObj.h / 2;
+      const rotatedHalfWidth = Math.abs(halfW * cos) + Math.abs(halfH * sin);
+      const rotatedHalfHeight = Math.abs(halfW * sin) + Math.abs(halfH * cos);
+      const left = gameObj.x - rotatedHalfWidth;
+      const right = gameObj.x + rotatedHalfWidth;
+      const top = gameObj.y - rotatedHalfHeight;
+      const bottom = gameObj.y + rotatedHalfHeight;
+      const overlapsY = playersY + playerSize > top && playersY - playerSize < bottom;
+      const targetOverlapsX = targetX + playerSize - 5 > left && targetX - playerSize + 5 < right;
+      const surfaceTolerance = 6;
+      const standingOnThisBlock = targetOverlapsX && (
+        (!this.p.gravityFlipped && Math.abs((playersY - playerSize) - bottom) <= surfaceTolerance) ||
+        (this.p.gravityFlipped && Math.abs((playersY + playerSize) - top) <= surfaceTolerance)
+      );
+
+      if (!overlapsY || standingOnThisBlock) continue;
+
+      if (dx > 0 && currentX + playerSize <= left && targetX + playerSize > left) {
+        allowedDx = Math.min(allowedDx, left - playerSize - currentX);
+      } else if (dx < 0 && currentX - playerSize >= right && targetX - playerSize < right) {
+        allowedDx = Math.max(allowedDx, right + playerSize - currentX);
+      } else if (targetOverlapsX) {
+        allowedDx = 0;
+      }
+    }
+
+    return allowedDx;
+  }
   checkCollisions(_0x2f5078) {
     this.noclipStats.totalFrames++;
     this.p.diedThisFrame = false;
@@ -4190,6 +4239,7 @@ if (this.p.isFlying || this.p.isUfo) {
     const playersLastY = this.p.lastY;
     const previousCollisionWorldY = Number.isFinite(this._lastCollisionWorldY) ? this._lastCollisionWorldY : playersLastY;
     const gamemodeAddition = this.p.isWave ? 0 : (this.p.isFlying || this.p.isUfo ? 12 : 20);
+    this.p.platformerOnColliderSurface = false;
     this.p.collideTop = 0;
     this.p.collideBottom = 0;
     this.p.onCeiling = false;
