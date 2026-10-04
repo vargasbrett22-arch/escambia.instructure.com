@@ -421,6 +421,8 @@ class GameScene extends Phaser.Scene {
       },
       _v: -centerX
     };
+    this._forcePlatformer = localStorage.getItem('geose_forcePlatformer') === 'true';
+    this._platformerMoveDir = 0;
     this._state = new PlayerState();
     this._level = new window.LevelObject(this, this._cameraXRef);
     this._levelEditor = new window.LevelEditor(this);
@@ -5161,6 +5163,7 @@ _buildSettingsPopup() {
     }
 
     var infotextstrings = {
+        "ForcePlatformer": "Turns the level into platformer-style movement. Use A/D or the arrow keys to move left and right.",
         "Enable Portal Guide": "Enables extra indicators on portals.",
         "Enable Orb Guide": "Enables extra indicators on orbs.",
         "Rainbow Icon": "Cycles your icon's colors in every gamemode.",
@@ -5343,6 +5346,21 @@ _buildSettingsPopup() {
     };
 
     const buildGameplayPage = (container) => {
+        createToggle(container, column2X, startY + (spacingY * 5), "Force Platformer",
+            () => !!this._forcePlatformer,
+            (v) => {
+                this._forcePlatformer = !!v;
+                localStorage.setItem('geose_forcePlatformer', String(!!v));
+                if (this._state) {
+                    this._state.platformerFacing = this._state.platformerFacing || 1;
+                    this._state.platformerOnColliderSurface = false;
+                }
+            },
+            null,
+            25,
+            true,
+            "Force Platformer"
+        );
         createToggle(container, column1X, startY, "Show Percentage", 
             () => window.showPercentage, 
             (v) => window.showPercentage = v,
@@ -8811,6 +8829,14 @@ _showwippopup() {
     let subStepDelta = subSteps > 0 ? quantizedDelta / subSteps : 0;
     let verticalDelta = subStepDelta * d;
     let horizontalDelta = subStepDelta * playerSpeed * d;
+    let platformerHorizontalDelta = 0;
+    if (this._forcePlatformer) {
+      const platformerLeft = this._aKey.isDown || this._leftKey.isDown;
+      const platformerRight = this._dKey.isDown || this._rightKey.isDown;
+      platformerHorizontalDelta = (platformerRight ? horizontalDelta : 0) - (platformerLeft ? horizontalDelta : 0);
+      if (platformerLeft !== platformerRight) this._state.platformerFacing = platformerLeft ? -1 : 1;
+      horizontalDelta = 0;
+    }
     const initialY = this._state.y;
     const initialY2 = this._state2.y;
     for (let i = 0; i < subSteps; i++) {
@@ -8830,6 +8856,11 @@ _showwippopup() {
       const _primarySharedBefore = this._getDualSharedSignature(this._state);
       this._player.updateJump(verticalDelta);
       this._state.y += this._state.yVelocity * verticalDelta;
+      if (this._forcePlatformer) {
+        const allowedPlatformerDelta = this._player.getPlatformerHorizontalDelta(platformerHorizontalDelta, this._playerWorldX);
+        this._platformerMoveDir = Math.sign(allowedPlatformerDelta);
+        this._playerWorldX += allowedPlatformerDelta;
+      }
       this._player.checkCollisions(this._playerWorldX - centerX);
       const _primaryGravityChanged = this._isDual && !!this._state.gravityFlipped !== _primaryGravityBefore;
       let _primaryGravitySynced = false;
