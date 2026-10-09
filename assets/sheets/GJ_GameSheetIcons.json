@@ -5382,9 +5382,9 @@
     },
     "player_02_001.png": {
       "frame": {
-        "x": 1490,
-        "y": 61,
-        "w": 60,
+        "x": 0,
+        "y": 2022,
+        "w": 62,
         "h": 60
       },
       "rotated": false,
@@ -5392,32 +5392,52 @@
       "spriteSourceSize": {
         "x": 0,
         "y": 0,
-        "w": 60,
+        "w": 62,
         "h": 60
       },
       "sourceSize": {
-        "w": 60,
+        "w": 62,
         "h": 60
       }
     },
     "player_02_2_001.png": {
       "frame": {
-        "x": 816,
-        "y": 1924,
-        "w": 40,
-        "h": 29
+        "x": 64,
+        "y": 2022,
+        "w": 55,
+        "h": 55
       },
       "rotated": false,
       "trimmed": true,
       "spriteSourceSize": {
         "x": 0,
-        "y": 1,
-        "w": 40,
-        "h": 29
+        "y": 0,
+        "w": 55,
+        "h": 55
       },
       "sourceSize": {
-        "w": 40,
-        "h": 30
+        "w": 55,
+        "h": 55
+      }
+    },
+    "player_02_extra_001.png": {
+      "frame": {
+        "x": 121,
+        "y": 2022,
+        "w": 54,
+        "h": 38
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 54,
+        "h": 38
+      },
+      "sourceSize": {
+        "w": 54,
+        "h": 54
       }
     },
     "player_03_001.png": {
@@ -33968,7 +33988,7 @@
     "format": "RGBA8888",
     "size": {
       "w": 2012,
-      "h": 2020
+      "h": 2084
     },
     "scale": 1
   }
