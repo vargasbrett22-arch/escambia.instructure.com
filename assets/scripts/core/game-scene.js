@@ -919,6 +919,7 @@ this._menuUpdateLogBtn = this.add.image(screenWidth - 30 - 50, 33, "GJ_WebSheet"
       this._makeBouncyButton(playBtn2, 1, async () => {
         if (playBtnLoading) return;
         playBtnLoading = true;
+        this._audio.stopMusic();
         this._audio.playEffect("playSound_01", { volume: 1 });
         playBtn2.setTint(0x666666);
         playBtn2.disableInteractive();
