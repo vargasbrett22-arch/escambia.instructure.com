@@ -421,7 +421,17 @@ class GameScene extends Phaser.Scene {
       },
       _v: -centerX
     };
-    this._forcePlatformer = localStorage.getItem('geose_forcePlatformer') === 'true';
+    // Plat levels automatically force platformer. The flag is set before a level starts.
+    const _currentLevelNameForPlat = String(window.currentlevel?.[1] || "");
+    const _currentLevelIdForPlat = String(window.currentlevel?.[2] || "").replace(/\D/g, "");
+    const _isPlatLevel = /plat/i.test(_currentLevelNameForPlat) || _currentLevelIdForPlat.endsWith("420");
+    const _samePlatLevelRestart = !!window._platLevelActive &&
+      String(window._platLevelDisplayName || "") === _currentLevelNameForPlat;
+    window._platLevelActive = _isPlatLevel || _samePlatLevelRestart;
+    if (!window._platLevelActive) window._platLevelDisplayName = null;
+    // Keep the reward choice on this scene instance so it survives changes to the global flag.
+    this._platLevelRewardMoon = !!window._platLevelActive;
+    this._forcePlatformer = window._platLevelActive || localStorage.getItem('geose_forcePlatformer') === 'true';
     this._platformerMoveDir = 0;
     this._state = new PlayerState();
     this._level = new window.LevelObject(this, this._cameraXRef);
@@ -902,7 +912,10 @@ this._menuUpdateLogBtn = this.add.image(screenWidth - 30 - 50, 33, "GJ_WebSheet"
       const _scaleH = _diffMeta ? _diffMeta.h : 85;
       const _iconScale = Math.min(_targetH / _scaleH, _maxW / _scaleW);
 
-      const nameText = this.add.bitmapText(centerX, sh * 0.11 - 30, "bigFont", lvl.name || "Unknown", 50)
+      const _platLevelIdDigits = String(lvl.id || "").replace(/\D/g, "");
+      const _isPlatLevelEntry = /plat/i.test(String(lvl.name || "")) || _platLevelIdDigits.endsWith("420");
+      const _displayLevelName = String(lvl.name || "Unknown").replace(/plat/ig, "").replace(/\s{2,}/g, " ").trim() || "Unknown";
+      const nameText = this.add.bitmapText(centerX, sh * 0.11 - 30, "bigFont", _displayLevelName, 50)
         .setScrollFactor(0).setDepth(503).setOrigin(0.5);
       this._fitBitmapText(nameText, sw * 0.7);
       this._playOverlayObjects.push(nameText);
@@ -1211,7 +1224,12 @@ this._menuUpdateLogBtn = this.add.image(screenWidth - 30 - 50, 33, "GJ_WebSheet"
 
         window._onlineLevelId    = "online_" + lvl.id;
         window._onlineLevelString = levelString;
-        window._onlineLevelName   = lvl.name || "Online Level";
+        const _platIdDigits = String(lvl.id).replace(/\D/g, "");
+        const _isPlatLevel = /plat/i.test(String(lvl.name || "")) || _platIdDigits.endsWith("420");
+        window._platLevelActive = _isPlatLevel;
+        window._platLevelRewardMoon = _isPlatLevel;
+        window._onlineLevelName = String(lvl.name || "Online Level").replace(/plat/ig, "").replace(/\s{2,}/g, " ").trim() || "Online Level";
+        window._platLevelDisplayName = window._onlineLevelName;
         window._onlineSongOffset  = offset;
         window._onlineSongBuffer  = null;
         window._onlineSongKey     = null;
@@ -5350,6 +5368,11 @@ _buildSettingsPopup() {
         createToggle(container, column2X, startY + (spacingY * 5), "Force Platformer",
             () => !!this._forcePlatformer,
             (v) => {
+                // Plat levels lock Force Platformer on until the level is exited.
+                if (window._platLevelActive && !v) {
+                    this._forcePlatformer = true;
+                    return;
+                }
                 this._forcePlatformer = !!v;
                 localStorage.setItem('geose_forcePlatformer', String(!!v));
                 if (this._state) {
@@ -10698,7 +10721,10 @@ window.open("https://github.com/web-dashers/web-dashers.github.io", "_blank"); }
     }
     const _0x4edc03 = this._endStarX;
     const _0x5a0e9 = this._endStarY;
-    const _0x453043 = this.add.image(_0x4edc03, _0x5a0e9, "GJ_WebSheet", "GJ_bigStar_001.png").setScale(3).setAlpha(0);
+    const _isPlatMoonAward = !!(this._platLevelRewardMoon || window._platLevelActive);
+    const _rewardFrame = _isPlatMoonAward ? "GJ_bigMoon_noShadow_001.png" : "GJ_bigStar_001.png";
+    // Both reward frames are in GJ_GameSheet03.json; never request them from GJ_WebSheet.
+    const _0x453043 = this.add.image(_0x4edc03, _0x5a0e9, "GJ_GameSheet03", _rewardFrame).setScale(3).setAlpha(0);
     this._endLayerInternal.add(_0x453043);
     this.tweens.add({
       targets: _0x453043,
