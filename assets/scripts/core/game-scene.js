@@ -407,6 +407,14 @@ class GameScene extends Phaser.Scene {
     });
   }
   create() {
+    if (this._gameHotkeyHandler) {
+      window.removeEventListener("keydown", this._gameHotkeyHandler, true);
+      this._gameHotkeyHandler = null;
+    }
+    if (this._modMenuBindCleanup) {
+      this._modMenuBindCleanup();
+      this._modMenuBindCleanup = null;
+    }
     this._bgSpeedX = 0.1;
     this._bgSpeedY = 0.1;
     this._menuCameraX = -centerX;
@@ -421,6 +429,14 @@ class GameScene extends Phaser.Scene {
       },
       _v: -centerX
     };
+    // The mod menu hotkey is saved separately from gameplay keybinds. Tab is the default.
+    this._modMenuKeyCode = parseInt(localStorage.getItem("gd_modMenuKeyCode") || "9", 10);
+    if (!Number.isInteger(this._modMenuKeyCode) || this._modMenuKeyCode <= 0) this._modMenuKeyCode = 9;
+    this._modMenuKeyListening = false;
+    this._modMenuBindCleanup = null;
+    this._modMenuOpenedByHotkey = false;
+    this._freecamActive = false;
+    this._freecamSpeed = 10; // world pixels per 60 Hz frame
     // Plat levels automatically force platformer. The flag is set before a level starts.
     const _currentLevelNameForPlat = String(window.currentlevel?.[1] || "");
     const _currentLevelIdForPlat = String(window.currentlevel?.[2] || "").replace(/\D/g, "");
@@ -3741,6 +3757,13 @@ this._menuUpdateLogBtn = this.add.image(screenWidth - 30 - 50, 33, "GJ_WebSheet"
       .setDepth(100)
       .setVisible(false);
 
+    this._freecamIndicator = this.add.bitmapText(10, 90, "bigFont", "FREECAM (LEFT / RIGHT)", 20)
+      .setOrigin(0, 0)
+      .setAlpha(0.8)
+      .setDepth(100)
+      .setTint(0x66ffff)
+      .setVisible(false);
+
     this._accuracyIndicator = this.add.bitmapText(10, 30, "bigFont", "100.00%", 20)
       .setOrigin(0, 0)
       .setAlpha(0.4)
@@ -3896,6 +3919,47 @@ this._menuUpdateLogBtn = this.add.image(screenWidth - 30 - 50, 33, "GJ_WebSheet"
         this.scene.restart();
       } else if (!this._menuActive && !this._slideIn && !this._levelWon) {
         this._pauseGame();
+      }
+    });
+    // Tab (by default) toggles the Mod menu. F toggles Freecam; arrows pan the camera while active.
+    this._gameHotkeyHandler = (event) => {
+      if (this._modMenuKeyListening || this._keybindPopup || window._activeCustomInput) return;
+      if (event.repeat) return;
+      const code = event.keyCode || event.which;
+      if (code === 70) { // F = Freecam
+        if (this._menuActive || this._slideIn || this._levelWon || this._paused) return;
+        event.preventDefault();
+        event.stopPropagation();
+        this._freecamActive = !this._freecamActive;
+        this._freecamIndicator?.setVisible(this._freecamActive);
+        return;
+      }
+      if (code === this._modMenuKeyCode) {
+        event.preventDefault();
+        event.stopPropagation();
+        if (this._settingsPopup) {
+          const resumeAfterClose = !!this._modMenuOpenedByHotkey;
+          this._modMenuOpenedByHotkey = false;
+          this._settingsPopup.destroy();
+          this._settingsPopup = null;
+          if (resumeAfterClose && this._paused) this._resumeGame();
+        } else {
+          // Match the pause-menu behavior when the hotkey is used during active gameplay.
+          this._modMenuOpenedByHotkey = !this._menuActive && !this._slideIn && !this._levelWon && !this._paused;
+          if (this._modMenuOpenedByHotkey) this._pauseGame();
+          this._buildSettingsPopup();
+        }
+      }
+    };
+    window.addEventListener("keydown", this._gameHotkeyHandler, true);
+    this.events.once("shutdown", () => {
+      if (this._gameHotkeyHandler) {
+        window.removeEventListener("keydown", this._gameHotkeyHandler, true);
+        this._gameHotkeyHandler = null;
+      }
+      if (this._modMenuBindCleanup) {
+        this._modMenuBindCleanup();
+        this._modMenuBindCleanup = null;
       }
     });
     this._restartKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.R);
@@ -5108,6 +5172,20 @@ _buildSettingsPopup() {
         panelHeight = 550;
 
     this._settingsPopup = this.add.container(0, 0).setScrollFactor(0).setDepth(250);
+    const _settingsPopupInstance = this._settingsPopup;
+    const _settingsPopupOriginalDestroy = _settingsPopupInstance.destroy.bind(_settingsPopupInstance);
+    _settingsPopupInstance.destroy = (...args) => {
+      if (this._modMenuBindCleanup) {
+        this._modMenuBindCleanup();
+        this._modMenuBindCleanup = null;
+      }
+      this._modMenuKeyListening = false;
+      if (this._modMenuOpenedByHotkey && this._paused) {
+        this._modMenuOpenedByHotkey = false;
+        this._resumeGame();
+      }
+      return _settingsPopupOriginalDestroy(...args);
+    };
 
     const dim = this.add.rectangle(centerX, centerY, screenWidth, screenHeight, 0, 150 / 255).setInteractive();
     this._settingsPopup.add(dim);
@@ -5126,7 +5204,7 @@ _buildSettingsPopup() {
         this._settingsPopup = null;
     });
 
-    const pages = ["Mod menu", "Visual", "Advanced", "Performance"];
+    const pages = ["Mod menu", "Visual", "Advanced", "Performance", "Controls"];
     let currentPage = 0;
     const pageTitle = this.add.bitmapText(0, -(panelHeight / 2) + 45, "bigFont", pages[currentPage], 40).setOrigin(0.5);
     innerContainer.add(pageTitle);
@@ -5637,7 +5715,86 @@ _buildSettingsPopup() {
         );
     };
 
+    const _getModMenuKeyLabel = () => {
+        const code = this._modMenuKeyCode;
+        if (code >= 48 && code <= 57) return String.fromCharCode(code);
+        if (code >= 96 && code <= 105) return "NUM " + String.fromCharCode(code - 48);
+        return this._getKeyName(code);
+    };
+
+    const buildControlsPage = (container) => {
+        const title = this.add.bitmapText(-290, -125, "bigFont", "Open Mod Menu", 30).setOrigin(0, 0.5);
+        this._fitBitmapText(title, 300);
+        container.add(title);
+
+        const keyButton = this.add.nineslice(165, -125, "GJ_button01", null, 190, 52, 18, 18, 18, 18)
+          .setOrigin(0.5).setInteractive();
+        const keyText = this.add.bitmapText(165, -125, "goldFont", _getModMenuKeyLabel(), 32).setOrigin(0.5);
+        this._fitBitmapText(keyText, 170);
+        container.add([keyButton, keyText]);
+
+        const status = this.add.bitmapText(0, -35, "goldFont", "Click the key box to change the hotkey", 24).setOrigin(0.5);
+        this._fitBitmapText(status, 690);
+        container.add(status);
+
+        const freecamText = this.add.bitmapText(0, 45, "bigFont", "Freecam: press F, then use LEFT / RIGHT arrows", 25).setOrigin(0.5);
+        this._fitBitmapText(freecamText, 690);
+        container.add(freecamText);
+        const hintText = this.add.bitmapText(0, 100, "goldFont", "The hotkey is saved on this browser", 21).setOrigin(0.5);
+        container.add(hintText);
+
+        let bindingHandler = null;
+        const cleanupBinding = () => {
+          if (bindingHandler) {
+            window.removeEventListener("keydown", bindingHandler, true);
+            bindingHandler = null;
+          }
+          if (this._modMenuBindCleanup === cleanupBinding) this._modMenuBindCleanup = null;
+          this._modMenuKeyListening = false;
+          keyButton.clearTint();
+        };
+        this._makeCompositeBouncyButton(keyButton, [keyButton, { target: keyText, getBaseScaleX: () => keyText.scaleX, getBaseScaleY: () => keyText.scaleY }], 1, () => {
+          if (this._modMenuBindCleanup) this._modMenuBindCleanup();
+          this._modMenuKeyListening = true;
+          keyButton.setTint(0xffff66);
+          keyText.setText("...");
+          status.setText("Press a key (ESC cancels)");
+          bindingHandler = (event) => {
+            if (!this._modMenuKeyListening) return;
+            event.preventDefault();
+            event.stopPropagation();
+            if (event.repeat) return;
+            const code = event.keyCode || event.which;
+            if (code === 27) {
+              cleanupBinding();
+              keyText.setText(_getModMenuKeyLabel());
+              this._fitBitmapText(keyText, 170);
+              status.setText("Cancelled");
+              return;
+            }
+            // Keep gameplay and the F freecam key available; numbers like 9 are fine.
+            const reservedKeys = [13, 32, 37, 38, 39, 40, 65, 68, 70, 69, 76, 78, 80, 81, 82, 87, 88, 90];
+            if (reservedKeys.includes(code)) {
+              status.setText("That key is already used by gameplay");
+              return;
+            }
+            this._modMenuKeyCode = code;
+            localStorage.setItem("gd_modMenuKeyCode", String(code));
+            cleanupBinding();
+            keyText.setText(_getModMenuKeyLabel());
+            this._fitBitmapText(keyText, 170);
+            status.setText("Saved! Press " + _getModMenuKeyLabel() + " to open / close the Mod menu");
+          };
+          this._modMenuBindCleanup = cleanupBinding;
+          window.addEventListener("keydown", bindingHandler, true);
+        });
+    };
+
     const buildPage = (idx) => {
+        if (this._modMenuBindCleanup) {
+          this._modMenuBindCleanup();
+          this._modMenuBindCleanup = null;
+        }
         pageContainer.destroy();
         pageContainer = this.add.container(0, 0);
         innerContainer.add(pageContainer);
@@ -5647,6 +5804,7 @@ _buildSettingsPopup() {
         else if (idx === 1) buildVisualPage(pageContainer);
         else if (idx === 2) buildAdvancedPage(pageContainer);
         else if (idx === 3) buildPerformancePage(pageContainer);
+        else if (idx === 4) buildControlsPage(pageContainer);
     };
 
     buildPage(0);
@@ -8670,6 +8828,8 @@ _showwippopup() {
     if (!this._levelWon && !this._state.isDead && this._level.endXPos > 0) {
       const _0x448396 = 600;
       if (this._playerWorldX >= this._level.endXPos - _0x448396) {
+        this._freecamActive = false;
+        this._freecamIndicator?.setVisible(false);
         this._levelWon = true;
         this._endPortalGameY = this._level._endPortalGameY || 240;
         this._triggerEndPortal();
@@ -8855,8 +9015,8 @@ _showwippopup() {
     let horizontalDelta = subStepDelta * playerSpeed * d;
     let platformerHorizontalDelta = 0;
     if (this._forcePlatformer) {
-      const platformerLeft = this._aKey.isDown || this._leftKey.isDown;
-      const platformerRight = this._dKey.isDown || this._rightKey.isDown;
+      const platformerLeft = !this._freecamActive && (this._aKey.isDown || this._leftKey.isDown);
+      const platformerRight = !this._freecamActive && (this._dKey.isDown || this._rightKey.isDown);
       platformerHorizontalDelta = (platformerRight ? horizontalDelta : 0) - (platformerLeft ? horizontalDelta : 0);
       if (platformerLeft !== platformerRight) this._state.platformerFacing = platformerLeft ? -1 : 1;
       horizontalDelta = 0;
@@ -8981,33 +9141,40 @@ _showwippopup() {
     this._state.ignorePortals = false;
     this._state2.ignorePortals = false;
     if (!this._endCameraOverride) {
-      const cameraOffsetX = this._playerWorldX - centerX;
-      if (this._level.endXPos > 0) {
-        const maxCameraX = this._level.endXPos - screenWidth;
-        if (cameraOffsetX >= maxCameraX - 200) {
-          this._endCameraOverride = true;
-          this._cameraX = cameraOffsetX;
-          const endCameraY = -140 + (this._level._endPortalGameY || 240);
-          const easingPower = 1.8;
-          const easeInOutCubic = t => t < 0.5 ? Math.pow(t * 2, easingPower) / 2 : 1 - Math.pow((1 - t) * 2, easingPower) / 2;
-          this._endCamTween = {
-            p: 0,
-            fromX: this._cameraX,
-            toX: maxCameraX,
-            fromY: this._cameraY,
-            toY: endCameraY
-          };
-          this.tweens.add({
-            targets: this._endCamTween,
-            p: 1,
-            duration: 1200,
-            ease: easeInOutCubic
-          });
+      if (this._freecamActive) {
+        const cameraDirection = (this._rightKey.isDown ? 1 : 0) - (this._leftKey.isDown ? 1 : 0);
+        if (cameraDirection) {
+          this._cameraX += cameraDirection * (deltaTime / (1000 / 60)) * this._freecamSpeed;
+        }
+      } else {
+        const cameraOffsetX = this._playerWorldX - centerX;
+        if (this._level.endXPos > 0) {
+          const maxCameraX = this._level.endXPos - screenWidth;
+          if (cameraOffsetX >= maxCameraX - 200) {
+            this._endCameraOverride = true;
+            this._cameraX = cameraOffsetX;
+            const endCameraY = -140 + (this._level._endPortalGameY || 240);
+            const easingPower = 1.8;
+            const easeInOutCubic = t => t < 0.5 ? Math.pow(t * 2, easingPower) / 2 : 1 - Math.pow((1 - t) * 2, easingPower) / 2;
+            this._endCamTween = {
+              p: 0,
+              fromX: this._cameraX,
+              toX: maxCameraX,
+              fromY: this._cameraY,
+              toY: endCameraY
+            };
+            this.tweens.add({
+              targets: this._endCamTween,
+              p: 1,
+              duration: 1200,
+              ease: easeInOutCubic
+            });
+          } else {
+            this._cameraX = cameraOffsetX;
+          }
         } else {
           this._cameraX = cameraOffsetX;
         }
-      } else {
-        this._cameraX = cameraOffsetX;
       }
     }
     if (this._endCameraOverride && this._endCamTween) {
