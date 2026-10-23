@@ -162,8 +162,8 @@ window.allLevels = [
         ["Creator", "Artist"]
     ],
     [
-        "web_dashers_plat",
-        "Web Dashers Plat",
+        "plat_madnesz",
+        "Plat Madnesz",
         "level_9292",
         ["Creator", "Artist"]
     ], /*
