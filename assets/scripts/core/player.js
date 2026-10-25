@@ -4877,6 +4877,12 @@ if (this.p.isFlying || this.p.isUfo) {
           }
           continue;
         } else if (_colType === solidType) {
+          // Geometry Dash-style D-block: while the player is actively dashing,
+          // skip this block's solid collision. The object loader must mark D-blocks
+          // with isDBlock: true for this behavior to apply.
+          if (gameObj.isDBlock === true && this.p.isDashing) {
+            continue;
+          }
           let _0x146a97 = playersY - playerSize + gamemodeAddition;
           let _0x869e42 = playersLastY - playerSize + gamemodeAddition;
           let _0x3e7199 = playersY + playerSize - gamemodeAddition;
