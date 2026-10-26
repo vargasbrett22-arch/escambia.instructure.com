@@ -634,7 +634,16 @@ class GameScene extends Phaser.Scene {
     this._logo = this.add.image(0, 100, "GJ_WebSheet", "GJ_logo_001.png").setScrollFactor(0).setDepth(30).setScale(1.2);
     this._robLogo = this.add.image(110, 595, "GJ_WebSheet", "RobTopLogoBig_001.png").setScrollFactor(0).setDepth(30).setScale(0.525).setInteractive();
     this._makeBouncyButton(this._robLogo, 0.525, () => {
-      window.open("https://geometrydash.com", "_blank");
+      const entered = window._gdDevUnlocked
+        ? "brett67"
+        : window.prompt("Enter developer password:");
+      if (entered === "brett67") {
+        window._gdDevUnlocked = true;
+        window._gdDevMode = false;
+        window.alert("Developer mode unlocked. Press D to toggle it.");
+      } else if (entered !== null) {
+        window.alert("Incorrect password.");
+      }
     }, () => this._menuActive);
     const _socialIconDefs = [
       {frame:  "",                       url: "",                                                     angle: 0,                row: 0, col: 0 },
@@ -3990,6 +3999,25 @@ this._menuUpdateLogBtn = this.add.image(screenWidth - 30 - 50, 33, "GJ_WebSheet"
       if (this._modMenuKeyListening || this._keybindPopup || window._activeCustomInput) return;
       if (event.repeat) return;
       const code = event.keyCode || event.which;
+      if (code === 68 && window._gdDevUnlocked) { // D = Developer mode
+        event.preventDefault();
+        event.stopPropagation();
+        window._gdDevMode = !window._gdDevMode;
+        if (window._gdDevMode) {
+          const rawAttempts = window.prompt("Developer mode: set attempts (1–1,000,000):", String(this._levelAttempts || 1));
+          if (rawAttempts !== null) {
+            const requested = Math.floor(Number(rawAttempts));
+            if (Number.isFinite(requested) && requested >= 1) {
+              this._levelAttempts = Math.min(1000000, requested);
+              this._attemptsLabel?.setText("Attempt " + this._levelAttempts);
+              this._positionAttemptsLabel?.();
+            } else {
+              window.alert("Enter a number from 1 to 1,000,000.");
+            }
+          }
+        }
+        return;
+      }
       if (code === 70) { // F = Freecam
         if (this._menuActive || this._slideIn || this._levelWon || this._paused) return;
         event.preventDefault();
@@ -5272,6 +5300,20 @@ _buildSettingsPopup() {
     let currentPage = 0;
     const pageTitle = this.add.bitmapText(0, -(panelHeight / 2) + 45, "bigFont", pages[currentPage], 40).setOrigin(0.5);
     innerContainer.add(pageTitle);
+    // Dedicated Jetpack section header/button using the requested RobTop sprite.
+    const jetpackSectionIcon = this.add.image(-(panelWidth / 2) + 105, -(panelHeight / 2) + 88,
+      "GJ_GameSheetIcons", "gj_jetpackBtn_on_001.png").setScale(0.55).setInteractive();
+    const jetpackSectionLabel = this.add.bitmapText(-(panelWidth / 2) + 145, -(panelHeight / 2) + 88,
+      "bigFont", "JETPACK", 25).setOrigin(0, 0.5);
+    innerContainer.add([jetpackSectionIcon, jetpackSectionLabel]);
+    this._makeBouncyButton(jetpackSectionIcon, 0.55, () => {
+      window._jetpackSectionEnabled = !window._jetpackSectionEnabled;
+      jetpackSectionLabel.setText(window._jetpackSectionEnabled ? "JETPACK: ON" : "JETPACK");
+      if (window._jetpackSectionEnabled) {
+        if (this._player && typeof this._player.enterJetpackMode === "function") this._player.enterJetpackMode();
+        else if (this._player && typeof this._player.enterBirdMode === "function") this._player.enterBirdMode();
+      }
+    });
     const leftArrow = this.add.image(-(panelWidth / 2) - 130, 0, "GJ_GameSheet03", "GJ_arrow_01_001.png")
         .setFlipX(false).setInteractive();
     innerContainer.add(leftArrow);
