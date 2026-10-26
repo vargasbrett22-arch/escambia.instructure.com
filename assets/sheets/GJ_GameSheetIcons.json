@@ -33999,6 +33999,46 @@
         "w": 50,
         "h": 40
       }
+    },
+    "JETPACK_01.png": {
+      "frame": {
+        "x": 190,
+        "y": 1928,
+        "w": 77,
+        "h": 69
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 77,
+        "h": 69
+      },
+      "sourceSize": {
+        "w": 77,
+        "h": 69
+      }
+    },
+    "JETPACK_01_2.png": {
+      "frame": {
+        "x": 270,
+        "y": 1928,
+        "w": 73,
+        "h": 58
+      },
+      "rotated": false,
+      "trimmed": true,
+      "spriteSourceSize": {
+        "x": 0,
+        "y": 0,
+        "w": 73,
+        "h": 58
+      },
+      "sourceSize": {
+        "w": 73,
+        "h": 58
+      }
     }
   },
   "meta": {
