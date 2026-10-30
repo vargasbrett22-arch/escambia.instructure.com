@@ -6636,11 +6636,11 @@ _buildSettingsPopup() {
       fakeloading.clearTint();
       fakeloading.setBlendMode(Phaser.BlendModes.NORMAL);
       fakeloading.setAlpha(1);
-      fakeloading.setTexture("GJ_GameSheet03", "exMark_001.png");
+      fakeloading.setTexture("GJ_GameSheet03", "GJ_completesIcon_001.png");
       fakeloading.setRotation(0);
       fakeloading.setScale(1.25);
       fakeloading.y = -25;
-      statusText.setText("Failed. Please try again never. ");
+      statusText.setText("access granted successfully.");
     });
 
     this._reqpopupexit = () => {
