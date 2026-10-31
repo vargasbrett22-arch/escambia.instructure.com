@@ -10510,7 +10510,7 @@ _applyMirrorEffect() {
     const _0x3e9c79 = _0x33b564.y - 35;
     
     this._songslayer.add(this.add.bitmapText(containerX, 65, "bigFont", "Soundtrack", 55).setOrigin(0.5, 0.5).setDepth(210));
-    this._songslayer.add(this.add.bitmapText(containerX, 300, "bigFont", "YOO inf+ YOUR SO TUFFINI hahah", 42).setOrigin(0.5, 0.5).setDepth(210));
+    this._songslayer.add(this.add.bitmapText(containerX, 300, "bigFont", "YOO inf aura/nyour so tuffini", 42).setOrigin(0.5, 0.5).setDepth(210));
     
     this._songslayer.add(this.add.image(containerX - 312, _0x3e9c79, "GJ_WebSheet", "chain_01_001.png").setOrigin(0.5, 1).setDepth(210));
     this._songslayer.add(this.add.image(containerX + 312, _0x3e9c79, "GJ_WebSheet", "chain_01_001.png").setOrigin(0.5, 1).setDepth(210));
