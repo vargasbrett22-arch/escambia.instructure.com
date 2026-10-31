@@ -134,6 +134,8 @@ class BootScene extends Phaser.Scene {
       "iam a robot",
       "iam crine",
       "me when i lie"
+      "TUFF"
+      "OK cool"
     ];
     const sliderOriginX = cx - 105;
     const sliderOriginY = cy + 110;
