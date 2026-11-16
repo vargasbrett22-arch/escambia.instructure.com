@@ -6606,7 +6606,7 @@ _buildSettingsPopup() {
  fakeloading.setRotation(0);
  fakeloading.setScale(1.25);
  fakeloading.y = -25;
- statusText.setText("Failed. Please try again never. ");
+ statusText.setText("acess granted.");
  });
 
  this._reqpopupexit = () => {
