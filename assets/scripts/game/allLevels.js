@@ -1,4 +1,3 @@
-
 window.allLevels = [
     [
         "stereo_madness",
@@ -115,17 +114,59 @@ window.allLevels = [
         ["RobTop", "Waterflame"]
     ],
     [
-        "deadlocked",
-        "Deadlocked",
-        "level_20",
-        ["RobTop", "F-777"]
-    ],
-    [
         "fingerdash",
         "Fingerdash",
         "level_21",
         ["RobTop", "MDK"]
     ],
+    [
+        "nine_circles",
+        "Nine Circles",
+        "level_4284013",
+        ["Zobros", "Rukkus"]
+    ],
+    [
+        "the_nightmare",
+        "The Nightmare",
+        "level_5703070",
+        ["Jax", "Step"]
+    ],
+    [
+        "the_brett_mare",
+        "The Brett Mare",
+        "level_456767",
+        ["sirmircowave", "MindCap"]
+    ],
+    [
+        "verity_brett_tuff",
+        "Verity Brett Tuff",
+        "level_123321",
+        ["Creator", "Artist"]
+    ],
+    [
+        "web_dashers_next_lev",
+        "Web Dashers Next Lev",
+        "level_1234",
+        ["sirmircowave", "F-777"]
+    ],
+    [
+        "matthew_circles",
+        "Matthew Circles",
+        "level_99",
+        ["MindCap", "Dimrain47"]
+    ],
+    [
+        "nuke_powder",
+        "Nuke Powder",
+        "level_201391",
+        ["Creator", "Artist"]
+    ],
+    [
+        "plat_madnesz",
+        "Plat Madnesz",
+        "level_9292",
+        ["Creator", "Artist"]
+    ], /*
     [
         "dash",
         "Dash",
@@ -133,35 +174,10 @@ window.allLevels = [
         ["RobTop", "MDK"]
     ],
     [
-        "the_challenge",
-        "The Challenge",
-        "level_67",
-        ["RobTop", "idk"]
-    ],
-    [
-        "the_brett_mare",
-        "The Brett Mare",
-        "level_456767",
-        ["Brett", "Unknown"]
-    ],
-    /*
-    [
-        "every_end",
-        "Every End",
-        "level_99",
-        ["MindCap", "Dimrain47"]
-    ],
-    [
         "bloodbath",
         "Bloodbath",
         "level_100",
         ["Riot", "Dimrain47"]
-    ],
-    [
-        "the_nightmare",
-        "The Nightmare",
-        "level_5703070",
-        ["Jax", "Step"]
     ],
     [
         "override",
@@ -180,12 +196,6 @@ window.allLevels = [
         "The Dark Star",
         "level_116489424",
         ["Torrenware", "MidiGuyDP"]
-    ],
-    [
-        "nine_circles",
-        "Nine Circles",
-        "level_4284013",
-        ["Zobros", "Rukkus"]
     ],
     [
         "sunshine",
