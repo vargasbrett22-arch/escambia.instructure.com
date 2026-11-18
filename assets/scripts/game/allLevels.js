@@ -1,3 +1,4 @@
+
 window.allLevels = [
     [
         "stereo_madness",
@@ -114,6 +115,12 @@ window.allLevels = [
         ["RobTop", "Waterflame"]
     ],
     [
+        "deadlocked",
+        "Deadlocked",
+        "level_20",
+        ["RobTop", "F-777"]
+    ],
+    [
         "fingerdash",
         "Fingerdash",
         "level_21",
@@ -150,12 +157,6 @@ window.allLevels = [
         ["sirmircowave", "F-777"]
     ],
     [
-        "matthew_circles",
-        "Matthew Circles",
-        "level_99",
-        ["MindCap", "Dimrain47"]
-    ],
-    [
         "nuke_powder",
         "Nuke Powder",
         "level_201391",
@@ -166,7 +167,15 @@ window.allLevels = [
         "Plat Madnesz",
         "level_9292",
         ["Creator", "Artist"]
-    ], /*
+    ],
+    [
+        "i_spy",
+        "I Spy",
+        "level_3434671",
+        ["sirmircowave", "CREO"]
+    ],
+
+    /*
     [
         "dash",
         "Dash",
