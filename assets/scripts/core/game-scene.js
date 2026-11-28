@@ -498,6 +498,69 @@ const ORB_PARTICLE_COLORS = {
   1704: 0x04ff04,
   1751: 0xff00d2
 };
+// Platformer collision helpers ported from the working mod.js movement system.
+// Horizontal motion is swept against solid objects after vertical collision checks,
+// preventing the player from getting wedged inside a block when hitboxes touch.
+function gdPlatIsWall(o) {
+  return !!o && o.type === "solid" && parseInt(o.objid ?? 0, 10) !== 143;
+}
+function gdPlatBox(o) {
+  const r = o.hitbox_radius;
+  if (r !== undefined && r !== null) return { l: o.x - r, r: o.x + r, lo: o.y - r, hi: o.y + r };
+  return { l: o.x - o.w / 2, r: o.x + o.w / 2, lo: o.y - o.h / 2, hi: o.y + o.h / 2 };
+}
+function gdPlatNearby(pl, x) {
+  try {
+    const layer = pl && pl._gameLayer;
+    return layer && typeof layer.getNearbySectionObjects === "function"
+      ? layer.getNearbySectionObjects(x).filter(gdPlatIsWall)
+      : [];
+  } catch (_) { return []; }
+}
+function gdPlatSpan(p) {
+  const size = p && p.isMini ? 18 : 30;
+  const fly = !!(p && (p.isFlying || p.isUfo || p.isWave));
+  const feet = fly ? 12 : 20, head = fly ? 12 : 3;
+  return { size, lo: p.y - size + (p.gravityFlipped ? head : feet), hi: p.y + size - (p.gravityFlipped ? feet : head) };
+}
+function gdPlatSweep(scene, x0, dx) {
+  if (!Number.isFinite(dx) || dx === 0) return 0;
+  const pl = scene._player;
+  const candidates = [{ pl, p: pl && pl.p }];
+  if (scene._isDual && scene._player2 && scene._player2.p && !scene._player2.p.isDead) {
+    candidates.push({ pl: scene._player2, p: scene._player2.p });
+  }
+  const spans = candidates.filter(q => q.p && !q.p.isDead).map(q => gdPlatSpan(q.p));
+  let x1 = x0 + dx;
+  for (const o of gdPlatNearby(pl, x1)) {
+    const b = gdPlatBox(o);
+    for (const span of spans) {
+      if (!(span.hi > b.lo && span.lo < b.hi)) continue;
+      if (dx > 0 && x0 + span.size <= b.l + 0.01 && x1 + span.size > b.l) {
+        x1 = Math.min(x1, b.l - span.size);
+      } else if (dx < 0 && x0 - span.size >= b.r - 0.01 && x1 - span.size < b.r) {
+        x1 = Math.max(x1, b.r + span.size);
+      }
+    }
+  }
+  return x1 - x0;
+}
+function gdPlatBonk(pl, worldX) {
+  const p = pl && pl.p;
+  if (!p || p.isFlying || p.isUfo || p.isWave || p.isSpider || p.isDead) return;
+  const flip = !!p.gravityFlipped;
+  if (flip ? p.yVelocity >= 0 : p.yVelocity <= 0) return;
+  const size = p.isMini ? 18 : 30;
+  for (const o of gdPlatNearby(pl, worldX)) {
+    const b = gdPlatBox(o);
+    if (!(worldX + size - 5 > b.l && worldX - size + 5 < b.r)) continue;
+    if (!flip && p.y + size > b.lo && p.lastY + size <= b.lo + 0.5) {
+      p.y = b.lo - size; p.yVelocity = 0;
+    } else if (flip && p.y - size < b.hi && p.lastY - size >= b.hi - 0.5) {
+      p.y = b.hi + size; p.yVelocity = 0;
+    }
+  }
+}
 class GameScene extends UIScene {
   constructor() {
     super({
@@ -527,6 +590,17 @@ class GameScene extends UIScene {
       },
       _v: -centerX
     };
+    // Platformer levels automatically enable platformer movement.
+    const _currentLevelNameForPlat = String(window.currentlevel?.[1] || "");
+    const _currentLevelIdForPlat = String(window.currentlevel?.[2] || "").replace(/\D/g, "");
+    const _isPlatLevel = /plat/i.test(_currentLevelNameForPlat) || _currentLevelIdForPlat.endsWith("420");
+    const _samePlatLevelRestart = !!window._platLevelActive &&
+      String(window._platLevelDisplayName || "") === _currentLevelNameForPlat;
+    window._platLevelActive = _isPlatLevel || _samePlatLevelRestart;
+    if (!window._platLevelActive) window._platLevelDisplayName = null;
+    this._platLevelRewardMoon = !!window._platLevelActive;
+    this._forcePlatformer = window._platLevelActive || localStorage.getItem("geose_forcePlatformer") === "true";
+    this._platformerMoveDir = 0;
     this._state = new PlayerState();
     this._level = new window.LevelObject(this, this._cameraXRef);
     this._levelEditor = new window.LevelEditor(this);
@@ -667,6 +741,10 @@ class GameScene extends UIScene {
     this._rightKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.RIGHT);
     this._aKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.A);
     this._dKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.D);
+    // Platformer controls: A/D or arrows move; W, Up, or Space jump.
+    this._wKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.W);
+    this._upKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.UP);
+    this._platformerSpaceKey = this.input.keyboard.addKey(Phaser.Input.Keyboard.KeyCodes.SPACE);
 
     this._startPosIndex = -1;
 
@@ -1087,6 +1165,7 @@ class GameScene extends UIScene {
         showFPS: this._fpsText.visible,
         hidePauseBtn: window.hidePauseBtn,
         hidePracticeUI: window.hidePracticeUI,
+        forcePlatformer: localStorage.getItem("geose_forcePlatformer") === "true",
         solidWaveTrail: window.solidWave,
         noclipAccuracy: window.noClipAccuracy,
         hitboxesOnDeath: window.hitboxesOnDeath,
@@ -1125,6 +1204,7 @@ class GameScene extends UIScene {
         showFPS: false,
         hidePauseBtn: false,
         hidePracticeUI: false,
+        forcePlatformer: false,
         solidWaveTrail: false,
         noclipAccuracy: false,
         hitboxesOnDeath: false,
@@ -1160,6 +1240,8 @@ class GameScene extends UIScene {
     window.showFPS = !!data.showFPS;
     window.hidePauseBtn = !!data.hidePauseBtn;
     window.hidePracticeUI = !!data.hidePracticeUI;
+    window.forcePlatformer = !!data.forcePlatformer;
+    localStorage.setItem("geose_forcePlatformer", String(!!data.forcePlatformer));
     window.solidWave = data.solidWaveTrail;
     window.noClipAccuracy = data.noclipAccuracy;
     window.hitboxesOnDeath = data.hitboxesOnDeath;
@@ -2289,7 +2371,20 @@ class GameScene extends UIScene {
     let rawPercent = (this._playerWorldX / this._level.endXPos) * 100;
     rawPercent = Math.min(100, Math.max(0, rawPercent));
      const shownPercent = this._levelWon ? (this._interpolatedPercent || 0) : rawPercent;
-      if (window.percentageDecimals) {
+
+     if (this._forcePlatformer) {
+
+       const elapsed = Math.max(0, Math.floor(this._playTime || 0));
+
+       const minutes = Math.floor(elapsed / 60);
+
+       const seconds = elapsed % 60;
+
+       const timeText = `${minutes}:${String(seconds).padStart(2, "0")}`;
+
+       if (!this._labelTextCurrent(this._percentageLabel, timeText)) this._setLabelText(this._percentageLabel, timeText, timeText);
+
+     } else if (window.percentageDecimals) {
         const key = 1e9 + Math.round(shownPercent * 100);
         if (!this._labelTextCurrent(this._percentageLabel, key)) this._setLabelText(this._percentageLabel, key, shownPercent.toFixed(2) + "%");
       } else {
@@ -2297,7 +2392,7 @@ class GameScene extends UIScene {
         if (!this._labelTextCurrent(this._percentageLabel, key)) this._setLabelText(this._percentageLabel, key, key + "%");
       }
       this._percentageLabel.setVisible(window.showPercentage && !this._menuActive);
-      this._updateProgressBar(shownPercent);
+      this._updateProgressBar(this._forcePlatformer ? 0 : shownPercent);
       const startPosTotal = this._level._startPositions ? this._level._startPositions.length : 0;
     if (startPosTotal !== this._startPosCount) {
       this._startPosCount = startPosTotal;
@@ -2491,7 +2586,8 @@ class GameScene extends UIScene {
     }
    if (!this._applyJumpInput) {
     this._applyJumpInput = () => {
-      const jumpHeld = window.kbIsDown("jump");
+      const jumpHeld = window.kbIsDown("jump") ||
+         (this._forcePlatformer && !!(this._wKey?.isDown || this._upKey?.isDown || this._platformerSpaceKey?.isDown));
       if (!this._updateLogPopup && jumpHeld && !this._spaceWasDown) {
         this._pushButton();
       } else if (!jumpHeld && this._spaceWasDown && !this.input.activePointer.isDown) {
@@ -2726,6 +2822,14 @@ class GameScene extends UIScene {
     let subStepDelta = subSteps > 0 ? quantizedDelta / subSteps : 0;
     let verticalDelta = subStepDelta * d;
     let horizontalDelta = subStepDelta * playerSpeed * d;
+    let platformerHorizontalDelta = 0;
+    if (this._forcePlatformer) {
+      const platformerLeft = !this._freecamActive && (this._aKey.isDown || this._leftKey.isDown);
+      const platformerRight = !this._freecamActive && (this._dKey.isDown || this._rightKey.isDown);
+      platformerHorizontalDelta = (platformerRight ? horizontalDelta : 0) - (platformerLeft ? horizontalDelta : 0);
+      if (platformerLeft !== platformerRight) this._state.platformerFacing = platformerLeft ? -1 : 1;
+      horizontalDelta = 0;
+    }
     const initialY = this._state.y;
     const initialY2 = this._state2.y;
     for (let i = 0; i < subSteps; i++) {
@@ -2746,7 +2850,21 @@ class GameScene extends UIScene {
       const _primarySharedBefore = this._getDualSharedSignature(this._state);
       this._player.updateJump(verticalDelta);
       this._state.y += this._state.yVelocity * verticalDelta;
+      if (this._forcePlatformer) {
+        this._platformerMoveDir = Math.sign(platformerHorizontalDelta);
+        gdPlatBonk(this._player, this._playerWorldX);
+        if (this._isDual && !this._state2.isDead) gdPlatBonk(this._player2, this._playerWorldX);
+        if (this._state.platformerOnColliderSurface && !this._state.onGround && !this._state.onCeiling) {
+          this._state.platformerOnColliderSurface = false;
+        }
+      }
       this._player.checkCollisions(this._playerWorldX - centerX);
+      if (this._forcePlatformer) {
+        const beforeX = this._playerWorldX;
+        const allowedDelta = gdPlatSweep(this, beforeX, platformerHorizontalDelta);
+        this._playerWorldX = beforeX + allowedDelta;
+        if (Math.abs(allowedDelta - platformerHorizontalDelta) > 1e-6) this._platformerMoveDir = 0;
+      }
       const _primaryGravityChanged = this._isDual && !!this._state.gravityFlipped !== _primaryGravityBefore;
       const _waveGravitySync = _primaryGravityChanged && this._state.isWave && this._state2.isWave;
       let _primaryGravitySynced = false;
@@ -2800,7 +2918,7 @@ class GameScene extends UIScene {
       if (!this._state.isFlying && !this._state.isWave && !this._state.isUfo && !this._state.isSwing) {
         if (this._state.isBall) {
           const ballOnSurface = this._state.onGround || this._state.onCeiling;
-          this._player.updateBallRoll(horizontalDelta, ballOnSurface);
+          this._player.updateBallRoll(this._forcePlatformer ? platformerHorizontalDelta : horizontalDelta, ballOnSurface);
         } else if (this._state.onGround) {
           this._player.updateGroundRotation(verticalDelta);
         } else if (this._state.isDashing) {
@@ -2812,7 +2930,7 @@ class GameScene extends UIScene {
       if (this._isDual && !this._state2.isDead && !this._state2.isFlying && !this._state2.isWave && !this._state2.isUfo && !this._state2.isSwing) {
         if (this._state2.isBall) {
           const ball2OnSurface = this._state2.onGround || this._state2.onCeiling;
-          this._player2.updateBallRoll(horizontalDelta, ball2OnSurface);
+          this._player2.updateBallRoll(this._forcePlatformer ? platformerHorizontalDelta : horizontalDelta, ball2OnSurface);
         } else if (this._state2.onGround) {
           this._player2.updateGroundRotation(verticalDelta);
         } else if (this._state2.isDashing) {
