@@ -182,7 +182,7 @@ class BootScene extends Phaser.Scene {
       "how do i get trigonometry dash? lorenzo",
       "TUFF",
       "OK cool",
-      "A"
+      "abcdefghijklmnopqrstuvwxyz"
     ];
     const sliderOriginX = cx - 105;
     const sliderOriginY = cy + 110;
