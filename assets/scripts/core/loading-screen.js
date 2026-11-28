@@ -170,35 +170,90 @@ class BootScene extends Phaser.Scene {
     const cy = H / 2;
 
     const LOADING_MESSAGES = [
-      "Tip: press F to get the latest version",
-      "micah has gingervists",
-      "shoutout to wayong micah leland jospeh",
-      "brettini tuffini",
-      "jackson is geometry dash larper",
-      "B is the best levelini upini",
-      "ok bro",
-      "iam a robot",
-      "iam crine",
-      "how do i get trigonometry dash? lorenzo",
-      "TUFF",
-      "OK cool",
-      "abcdefghijklmnopqrstuvwxyz"
+      "Only one?",
+      "Listen to the music to help time your jumps",
+      "Back for more are ya?",
+      "Use practice mode to learn the layout of a level",
+      "If at first you don't succeed, try, try again...",
+      "Customize your character's icon and color!",
+      "You can download all songs from the level select page!",
+      "Spikes are not your friends. don't forget to jump",
+      "Build your own levels using the level editor",
+      "Go online to play other players levels!",
+      "Can you beat them all?",
+      "Here be dragons...",
+      "Pro tip: Don't crash",
+      "Hold down to keep jumping",
+      "The spikes whisper to me...",
+      "Looking for pixels",
+      "Loading awesome soundtracks...",
+      "What if the spikes are the good guys?",
+      "Pro tip: Jump",
+      "Does anyone even read this?",
+      "Collecting scrap metal",
+      "Waiting for planets to align",
+      "Starting the flux capacitor",
+      "Wandering around aimlessly",
+      "Where did I put that coin...",
+      "Loading the progressbar",
+      "Calculating chance of success",
+      "Hiding secrets",
+      "Drawing pretty pictures",
+      "Programmer is sleeping, please wait",
+      "Web is Love, Dasher is Life",
+      "Play, Crash, Rage, Quit, Repeat",
+      "Only one button required to crash",
+      "Such wow, very amaze.",
+      "Fus Ro DASH!",
+      "Loading Rage Cannon",
+      "Counting to 1337",
+      "It's all in the timing",
+      "Fake spikes are fake",
+      "Spikes... OF DOOM!",
+      "Why don't you go outside?",
+      "Loading will be finished... soon",
+      "This seems like a good place to hide a secret...",
+      "The vault Keeper's name is 'Spooky'...",
+      "Hop the big guy doesn't wakt up...",
+      "Shhhh! You're gonna wake the big one!",
+      "I have been expecting you.",
+      "A wild WebDasher appeared!",
+      "So many secrets...",
+      "Hiding rocket launcher",
+      "It's Over 9000!",
+      "Programming amazing AI",
+      "Hiding secret vault",
+      "Spooky doesn't get out much",
+      "Rohan was here",
+      "Warp Speed",
+      "So, what's up?",
+      "Hold on, reading the manual",
+      "I don't know how this works...",
+      "Why u have to be mad?",
+      "It is only game...",
+      "Unlock new icons and colors by completing achievements",
+      "y=mx+b",
+      "Nicest game ever!",
+      "S-slopes!~",
+      "Anything but slopes",
+      "Laggiest game ever.",
+      "GeometFree Dash!",
+      "I AM a fricking dasher.",
+      "web dash is steal all your level",
+      "Have you ever wanted levels free?"
     ];
     const sliderOriginX = cx - 105;
     const sliderOriginY = cy + 110;
     let sliderFill = null
 
-    this.load.image("game_bg_01", "assets/game-bg/game_bg_02_001-hd.png");
-    this.load.image("sliderBar", "assets/sprites/sliderBar.png");
-    this.load.image("sliderBar2", "assets/sprites/sliderBar2.png");
-    this.load.image("GJ_MenuBeta", "assets/sprites/GJ_MenuBeta.png");
-    this.load.image("Phaserlogo", "assets/sprites/Phaserlogo.png");
-    this.load.image("gravityLine_001", "assets/sprites/gravityLine_001.png");
-    this.load.atlas("GJ_WebSheet", "assets/sheets/GJ_WebSheet.png", "assets/sheets/GJ_WebSheet.json");
-    this.load.atlas("GJ_LaunchSheet", "assets/sheets/GJ_LaunchSheet.png", "assets/sheets/GJ_LaunchSheet.json");
-    // These are needed by the loading-message decorations below.
-    this.load.atlas("GJ_GameSheet03", "assets/sheets/GJ_GameSheet03.png", "assets/sheets/GJ_GameSheet03.json");
-    this.load.atlas("GJ_GameSheetIcons", "assets/sheets/GJ_GameSheetIcons.png", "assets/sheets/GJ_GameSheetIcons.json");
+    this.load.image("game_bg_01", "assets/game-sprites/game-bg/game_bg_01_001-hd.png");
+    this.load.image("sliderBar", "assets/ui-graphics/sprites/sliderBar.png");
+    this.load.image("sliderBar2", "assets/ui-graphics/sprites/sliderBar2.png");
+    this.load.image("GJ_MenuBeta", "assets/ui-graphics/sprites/GJ_MenuBeta.png");
+    this.load.image("Phaserlogo", "assets/ui-graphics/sprites/Phaserlogo.png");
+    this.load.image("gravityLine_001", "assets/ui-graphics/sprites/gravityLine_001.png");
+    this.load.atlas("GJ_WebSheet", "assets/ui-graphics/sheets/GJ_WebSheet.png", "assets/ui-graphics/sheets/GJ_WebSheet.json");
+    this.load.atlas("GJ_LaunchSheet", "assets/ui-graphics/sheets/GJ_LaunchSheet.png", "assets/ui-graphics/sheets/GJ_LaunchSheet.json");
     this.load.image("goldFont", "assets/fonts/goldFont.png");
     this.load.text("goldFontFnt", "assets/fonts/goldFont.fnt");
     
@@ -206,7 +261,7 @@ class BootScene extends Phaser.Scene {
       window.BeastAnim.loadDescs(this);
       const tex = this.textures.get("game_bg_01");
       const s = Math.max(W / tex.source[0].width, H / tex.source[0].height);
-      const bg = this.add.image(cx, cy, "game_bg_01").setScale(s).setTint(0x0066f);
+      const bg = this.add.image(cx, cy, "game_bg_01").setScale(s).setTint(0x0066ff);
       this.children.sendToBack(bg);
       sliderFill = this.add.tileSprite(sliderOriginX - 100, sliderOriginY - 2, 0, 14, "sliderBar");
       sliderFill.setOrigin(0, 0.5);
@@ -216,35 +271,9 @@ class BootScene extends Phaser.Scene {
         loadFont(this, "goldFont", goldFontData);
       }
       const msg = LOADING_MESSAGES[Math.floor(Math.random() * LOADING_MESSAGES.length)];
-      const messageText = this.add.bitmapText(cx, cy + 187, "goldFont", msg, 30).setOrigin(0.5);
-
-      // Small message-specific decorations. These are purely visual and do not
-      // affect gameplay or the loading process.
-      if (msg === "ok bro") {
-        this.add.image(cx + messageText.width / 2 + 24, cy + 187,
-          "GJ_GameSheet03", "diffIcon_02_btn_001.png").setOrigin(0.5).setScale(0.55);
-        messageText.x -= 12;
-      } else if (msg === "iam a robot") {
-        messageText.x -= 55;
-        for (let i = 0; i < 5; i++) {
-          this.add.image(cx + messageText.width / 2 + 22 + i * 30, cy + 187,
-            "GJ_GameSheet03", "diffIcon_auto_btn_001.png").setOrigin(0.5).setScale(0.48);
-        }
-      } else if (msg === "iam crine") {
-        this.add.image(cx - messageText.width / 2 - 28, cy + 187,
-          "GJ_GameSheetIcons", "player_04_001.png").setOrigin(0.5).setScale(0.55);
-        messageText.x += 14;
-      } else if (msg === "how do i get trigonometry dash? lorenzo") {
-        // Both frames are confirmed in GJ_GameSheet03. Keep the quote centered
-        // and flank it with the normal-face and difficulty icons.
-        messageText.setFontSize(23);
-        this.add.image(cx - messageText.width / 2 - 27, cy + 187,
-          "GJ_GameSheet03", "GJ_normalBtn_001.png").setOrigin(0.5).setScale(0.55);
-        this.add.image(cx + messageText.width / 2 + 27, cy + 187,
-          "GJ_GameSheet03", "diffIcon_01_btn_001.png").setOrigin(0.5).setScale(0.55);
-      }
+      this.add.bitmapText(cx, cy + 187, "goldFont", msg, 30).setOrigin(0.5);
       const robtopLogo = this.add.image(cx, cy - 120, "GJ_LaunchSheet", "RobTopLogoBig_001.png").setOrigin(0.5).setScale(0.8);
-      const gjLogo = this.add.image(cx, cy, "GJ_WebSheet", "GJ_logo_001.png").setOrigin(0.5);
+      const gjLogo = this.add.image(cx, cy, "GJ_WebSheet", "GJ_logo_001.png").setOrigin(0.5).setScale(1.1);
       const Logo = this.add.image(W - 123, 610, "Phaserlogo").setScale(0.115).setInteractive();
       this.children.bringToTop(robtopLogo);
       this.children.bringToTop(gjLogo);
@@ -268,66 +297,68 @@ class BootScene extends Phaser.Scene {
         };
       }
 
-      this.load.atlas("GJ_GameSheet", "assets/sheets/GJ_GameSheet.png", "assets/sheets/GJ_GameSheet.json");
-      this.load.atlas("GJ_GameSheet02", "assets/sheets/GJ_GameSheet02.png", "assets/sheets/GJ_GameSheet02.json");
-      this.load.atlas("SecretSheet", "assets/sheets/SecretSheet.png", "assets/sheets/SecretSheet.json");
-      this.load.atlas("GJ_GameSheet04", "assets/sheets/GJ_GameSheet04.png", "assets/sheets/GJ_GameSheet04.json");
-      this.load.atlas("GJ_GameSheetEditor", "assets/sheets/GJ_GameSheetEditor.png", "assets/sheets/GJ_GameSheetEditor.json");
-      this.load.atlas("GJ_GameSheetGlow", "assets/sheets/GJ_GameSheetGlow.png", "assets/sheets/GJ_GameSheetGlow.json");
-      queueIconAtlases(this, getEquippedIconBases());
-      this.load.atlas("Wavesheet", "assets/sheets/Wavesheet.png", "assets/sheets/Wavesheet.json");
-      this.load.json("Spider_AnimDesc", "assets/sheets/Spider_AnimDesc.json");
-      this.load.json("Robot_AnimDesc", "assets/sheets/Robot_AnimDesc.json");
+      this.load.atlas("GJ_GameSheet", "assets/ui-graphics/sheets/GJ_GameSheet.png", "assets/ui-graphics/sheets/GJ_GameSheet.json");
+      this.load.atlas("GJ_GameSheet02", "assets/ui-graphics/sheets/GJ_GameSheet02.png", "assets/ui-graphics/sheets/GJ_GameSheet02.json");
+      this.load.atlas("SecretSheet", "assets/ui-graphics/sheets/SecretSheet.png", "assets/ui-graphics/sheets/SecretSheet.json");
+      this.load.atlas("GJ_GameSheet03", "assets/ui-graphics/sheets/GJ_GameSheet03.png", "assets/ui-graphics/sheets/GJ_GameSheet03.json");
+      this.load.atlas("GJ_GameSheet04", "assets/ui-graphics/sheets/GJ_GameSheet04.png", "assets/ui-graphics/sheets/GJ_GameSheet04.json");
+      this.load.atlas("GJ_EditorSheet01", "assets/ui-graphics/sheets/GJ_EditorSheet01.png", "assets/ui-graphics/sheets/GJ_EditorSheet01.json");
+      this.load.atlas("GJ_GameSheetEditor", "assets/ui-graphics/sheets/GJ_GameSheetEditor.png", "assets/ui-graphics/sheets/GJ_GameSheetEditor.json");
+      this.load.atlas("GJ_GameSheetGlow", "assets/ui-graphics/sheets/GJ_GameSheetGlow.png", "assets/ui-graphics/sheets/GJ_GameSheetGlow.json");
+      this.load.atlas("GJ_GameSheetIcons", "assets/ui-graphics/sheets/GJ_GameSheetIcons.png", "assets/ui-graphics/sheets/GJ_GameSheetIcons.json");
+      queueIconAtlases(this, window.iconPreloadAll === false ? getEquippedIconBases() : getAllIconBases());
+      this.load.atlas("Wavesheet", "assets/ui-graphics/sheets/Wavesheet.png", "assets/ui-graphics/sheets/Wavesheet.json");
+      this.load.json("Spider_AnimDesc", "assets/ui-graphics/sheets/Spider_AnimDesc.json");
+      this.load.json("Robot_AnimDesc", "assets/ui-graphics/sheets/Robot_AnimDesc.json");
       window.BeastAnim.preload(this);
-      this.load.atlas("GJ_LaunchSheet", "assets/sheets/GJ_LaunchSheet.png", "assets/sheets/GJ_LaunchSheet.json");
-      this.load.atlas("player_ball_00", "assets/sheets/player_ball_00.png", "assets/sheets/player_ball_00.json");
-      this.load.atlas("player_dart_00", "assets/sheets/player_dart_00.png", "assets/sheets/player_dart_00.json");
-      this.load.atlas("CCControlColourPickerSpriteSheet-uhd", "assets/sheets/CCControlColourPickerSpriteSheet-uhd.png", "assets/sheets/CCControlColourPickerSpriteSheet-uhd.json");
-      this.load.atlas("PixelSheet_01-hd", "assets/sheets/PixelSheet_01.png", "assets/sheets/PixelSheet_01.json");
-      this.load.atlas("FireSheet_01-hd", "assets/sheets/FireSheet_01-hd.png", "assets/sheets/FireSheet_01-hd.json");
-      this.load.atlas("GJ_ParticleSheet-uhd", "assets/sheets/GJ_ParticleSheet.png", "assets/sheets/GJ_ParticleSheet.json");
+      this.load.atlas("GJ_LaunchSheet", "assets/ui-graphics/sheets/GJ_LaunchSheet.png", "assets/ui-graphics/sheets/GJ_LaunchSheet.json");
+      this.load.atlas("player_ball_00", "assets/ui-graphics/sheets/player_ball_00.png", "assets/ui-graphics/sheets/player_ball_00.json");
+      this.load.atlas("player_dart_00", "assets/ui-graphics/sheets/player_dart_00.png", "assets/ui-graphics/sheets/player_dart_00.json");
+      this.load.atlas("CCControlColourPickerSpriteSheet-uhd", "assets/ui-graphics/sheets/CCControlColourPickerSpriteSheet-uhd.png", "assets/ui-graphics/sheets/CCControlColourPickerSpriteSheet-uhd.json");
+      this.load.atlas("PixelSheet_01-hd", "assets/ui-graphics/sheets/PixelSheet_01.png", "assets/ui-graphics/sheets/PixelSheet_01.json");
+      this.load.atlas("FireSheet_01-hd", "assets/ui-graphics/sheets/FireSheet_01-hd.png", "assets/ui-graphics/sheets/FireSheet_01-hd.json");
+      this.load.atlas("GJ_ParticleSheet-uhd", "assets/ui-graphics/sheets/GJ_ParticleSheet.png", "assets/ui-graphics/sheets/GJ_ParticleSheet.json");
       this.load.image("bigFont", "assets/fonts/bigFont.png");
       this.load.text("bigFontFnt", "assets/fonts/bigFont.fnt");
-      this.load.image("square04_001", "assets/sprites/square04_001.png");
-      this.load.image("GJ_square02", "assets/sprites/GJ_square02.png");
-      this.load.image("GJ_square01", "assets/sprites/GJ_square01.png");
-      this.load.image("GJ_square05", "assets/sprites/GJ_square05.png");
-      this.load.image("GJ_square07", "assets/sprites/GJ_square07.png");
-      this.load.image("GJ_square04", "assets/sprites/GJ_square04.png");
-      this.load.image("GJ_square06", "assets/sprites/GJ_square06.png");
-      this.load.image("GJ_square67", "assets/sprites/GJ_square67.png");
-      this.load.image("square01_001", "assets/sprites/square01_001.png");
-      this.load.image("loadingCircle", "assets/sprites/loadingCircle.png");
-      this.load.image("GJ_button01", "assets/sprites/GJ_button_01.png");
-      this.load.image("GJ_button02", "assets/sprites/GJ_button_02.png");
-      this.load.image("GJ_button03", "assets/sprites/GJ_button_03.png");
-      this.load.image("GJ_button04", "assets/sprites/GJ_button_04.png");
-      this.load.image("GJ_button05", "assets/sprites/GJ_button_05.png");
-      this.load.image("GJ_button06", "assets/sprites/GJ_button_06.png");
-      this.load.image("import", "assets/sprites/import.png");
-      this.load.image("export", "assets/sprites/export.png");
-      this.load.image("tutorial_01", "assets/sprites/tutorial_01.png");
-      this.load.image("tutorial_02", "assets/sprites/tutorial_02.png");
-      this.load.image("tutorial_03", "assets/sprites/tutorial_03.png");
-      this.load.image("tutorial_04", "assets/sprites/tutorial_04.png");
-      this.load.image("tutorial_05", "assets/sprites/tutorial_05.png");
-      this.load.image("tab1", "assets/sprites/tab1.png");
-      this.load.image("tab2", "assets/sprites/tab2.png");
-      this.load.image("tab3", "assets/sprites/tab3.png");
-      this.load.image("tab4", "assets/sprites/tab4.png");
-      this.load.image("tab5", "assets/sprites/tab5.png");
-      this.load.image("tab6", "assets/sprites/tab6.png");
-      this.load.image("tab7", "assets/sprites/tab7.png");
-      this.load.image("tab8", "assets/sprites/tab8.png");
-      this.load.image("GJ_moveBtn", "assets/sprites/GJ_moveBtn.png");
-      this.load.image("GJ_moveSBtn", "assets/sprites/GJ_moveSBtn.png");
-      this.load.image("slidergroove2", "assets/sprites/slidergroove2.png");
-      this.load.image("macroBot", "assets/sprites/macroBot.png");
-      this.load.image("importMacro", "assets/sprites/importMacro.png");
-      this.load.image("playbackMacro", "assets/sprites/playbackMacro.png");
-      this.load.image("stopPlayback", "assets/sprites/stopPlayback.png");
-      this.load.image("recordMacro", "assets/sprites/recordMacro.png");
-      this.load.image("stopRecord", "assets/sprites/stopRecord.png");
+      this.load.image("square04_001", "assets/ui-graphics/sprites/square04_001.png");
+      this.load.image("GJ_square02", "assets/ui-graphics/sprites/GJ_square02.png");
+      this.load.image("GJ_square01", "assets/ui-graphics/sprites/GJ_square01.png");
+      this.load.image("GJ_square05", "assets/ui-graphics/sprites/GJ_square05.png");
+      this.load.image("GJ_square07", "assets/ui-graphics/sprites/GJ_square07.png");
+      this.load.image("GJ_square04", "assets/ui-graphics/sprites/GJ_square04.png");
+      this.load.image("GJ_square06", "assets/ui-graphics/sprites/GJ_square06.png");
+      this.load.image("GJ_square67", "assets/ui-graphics/sprites/GJ_square67.png");
+      this.load.image("square01_001", "assets/ui-graphics/sprites/square01_001.png");
+      this.load.image("loadingCircle", "assets/ui-graphics/sprites/loadingCircle.png");
+      this.load.image("GJ_button01", "assets/ui-graphics/sprites/GJ_button_01.png");
+      this.load.image("GJ_button02", "assets/ui-graphics/sprites/GJ_button_02.png");
+      this.load.image("GJ_button03", "assets/ui-graphics/sprites/GJ_button_03.png");
+      this.load.image("GJ_button04", "assets/ui-graphics/sprites/GJ_button_04.png");
+      this.load.image("GJ_button05", "assets/ui-graphics/sprites/GJ_button_05.png");
+      this.load.image("GJ_button06", "assets/ui-graphics/sprites/GJ_button_06.png");
+      this.load.image("ImportanIcon", "assets/ui-graphics/sprites/ImportanIcon.png");
+      this.load.image("tutorial_01", "assets/ui-graphics/sprites/tutorial_01.png");
+      this.load.image("tutorial_02", "assets/ui-graphics/sprites/tutorial_02.png");
+      this.load.image("tutorial_03", "assets/ui-graphics/sprites/tutorial_03.png");
+      this.load.image("tutorial_04", "assets/ui-graphics/sprites/tutorial_04.png");
+      this.load.image("tutorial_05", "assets/ui-graphics/sprites/tutorial_05.png");
+      this.load.image("tab1", "assets/ui-graphics/sprites/tab1.png");
+      this.load.image("tab2", "assets/ui-graphics/sprites/tab2.png");
+      this.load.image("tab3", "assets/ui-graphics/sprites/tab3.png");
+      this.load.image("tab4", "assets/ui-graphics/sprites/tab4.png");
+      this.load.image("tab5", "assets/ui-graphics/sprites/tab5.png");
+      this.load.image("tab6", "assets/ui-graphics/sprites/tab6.png");
+      this.load.image("tab7", "assets/ui-graphics/sprites/tab7.png");
+      this.load.image("tab8", "assets/ui-graphics/sprites/tab8.png");
+      this.load.image("GJ_moveBtn", "assets/ui-graphics/sprites/GJ_moveBtn.png");
+      this.load.image("GJ_moveSBtn", "assets/ui-graphics/sprites/GJ_moveSBtn.png");
+      this.load.image("slidergroove2", "assets/ui-graphics/sprites/slidergroove2.png");
+      this.load.image("macroBot", "assets/ui-graphics/sprites/macroBot.png");
+      this.load.image("importMacro", "assets/ui-graphics/sprites/importMacro.png");
+      this.load.image("playbackMacro", "assets/ui-graphics/sprites/playbackMacro.png");
+      this.load.image("stopPlayback", "assets/ui-graphics/sprites/stopPlayback.png");
+      this.load.image("recordMacro", "assets/ui-graphics/sprites/recordMacro.png");
+      this.load.image("stopRecord", "assets/ui-graphics/sprites/stopRecord.png");
 
       for (let i = 1; i < 23; i++) {
         let index = i - 1;
@@ -335,31 +366,33 @@ class BootScene extends Phaser.Scene {
         if (i.length < 2) i = "0" + i;
         let paddedIndex = String(index);
         if (paddedIndex.length < 2) paddedIndex = "0" + paddedIndex;
-        this.load.image("groundSquare_" + paddedIndex + "_001.png", "assets/game-ground/groundSquare_" + i + "_001.png");
-        this.load.image("groundSquare_" + paddedIndex + "_2_001.png", "assets/game-ground/groundSquare_" + i + "_2_001.png");
+        this.load.image("groundSquare_" + paddedIndex + "_001.png", "assets/game-sprites/game-ground/groundSquare_" + i + "_001.png");
+        this.load.image("groundSquare_" + paddedIndex + "_2_001.png", "assets/game-sprites/game-ground/groundSquare_" + i + "_2_001.png");
       }
 
       for (let i = 1; i < 60; i++) {
         let index = i - 1;
         i = String(i);
         if (i.length < 2) i = "0" + i;
-        this.load.image("game_bg_" + index, "assets/game-bg/game_bg_" + i + "_001-hd.png");
+        this.load.image("game_bg_" + index, "assets/game-sprites/game-bg/game_bg_" + i + "_001-hd.png");
       }
 
-      this.load.audio("menu_music", "assets/music/menuLoop.mp3");
-      this.load.audio("StayInsideMe", "assets/music/StayInsideMe.mp3");
+      this.load.audio("menu_music", "assets/sound/music/menuLoop.mp3");
+      this.load.audio("StayInsideMe", "assets/sound/music/StayInsideMe.mp3");
+      this.load.audio("secretLoop", "assets/sound/music/secretLoop.mp3");
+      this.load.audio("secretLoop2", "assets/sound/music/secretLoop02.mp3");
 
       /*for (const lvlarray of window.allLevels) {
         this.load.text(lvlarray[2], "assets/levels/" + lvlarray[2].split("_")[1] + ".txt");
-        this.load.audio(lvlarray[0], "assets/music/" + (lvlarray[4] ? lvlarray[4] : lvlarray[1].replaceAll(" ", "")) + ".mp3");
+        this.load.audio(lvlarray[0], "assets/sound/music/" + (lvlarray[4] ? lvlarray[4] : lvlarray[1].replaceAll(" ", "")) + ".mp3");
       }*/
 
-      this.load.audio("explode_11", "assets/sfx/explode_11.ogg");
-      this.load.audio("endStart_02", "assets/sfx/endStart_02.ogg");
-      this.load.audio("gold02", "assets/sfx/gold02.ogg");
-      this.load.audio("playSound_01", "assets/sfx/playSound_01.ogg");
-      this.load.audio("quitSound_01", "assets/sfx/quitSound_01.ogg");
-      this.load.audio("highscoreGet02", "assets/sfx/highscoreGet02.ogg");
+      this.load.audio("explode_11", "assets/sound/sfx/explode_11.ogg");
+      this.load.audio("endStart_02", "assets/sound/sfx/endStart_02.ogg");
+      this.load.audio("gold02", "assets/sound/sfx/gold02.ogg");
+      this.load.audio("playSound_01", "assets/sound/sfx/playSound_01.ogg");
+      this.load.audio("quitSound_01", "assets/sound/sfx/quitSound_01.ogg");
+      this.load.audio("highscoreGet02", "assets/sound/sfx/highscoreGet02.ogg");
 
       this.load.on("progress", (value) => {
         if (sliderFill) sliderFill.width = value * 380;
