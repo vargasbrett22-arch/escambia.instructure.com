@@ -1,10 +1,10 @@
  // editable config stuff 
 
 if (window.mainColor == null) {
-  window.mainColor = parseInt(localStorage.getItem("iconMainColor") || "04FF00", 16);
+  window.mainColor = parseInt(localStorage.getItem("iconMainColor") || "7d00ff", 16);
 }
 if (window.secondaryColor == null) {
-  window.secondaryColor = parseInt(localStorage.getItem("iconSecondaryColor") || "00FBFF", 16);
+  window.secondaryColor = parseInt(localStorage.getItem("iconSecondaryColor") || "ff0000", 16);
 }
 window.iconGlowColor = parseInt(localStorage.getItem("iconGlowColor") || "7DFF00", 16);
 window.iconGlowEnabled = localStorage.getItem("iconGlowEnabled") === "true";
