@@ -8,11 +8,11 @@ if (window.secondaryColor == null) {
 }
 window.iconGlowColor = parseInt(localStorage.getItem("iconGlowColor") || "7DFF00", 16);
 window.iconGlowEnabled = localStorage.getItem("iconGlowEnabled") === "true";
-window.currentPlayer = localStorage.getItem("iconCurrentPlayer") || "player_01";
+window.currentPlayer = localStorage.getItem("iconCurrentPlayer") || "player_296";
 window.currentShip   = localStorage.getItem("iconCurrentShip")   || "ship_01";
 window.currentBall   = localStorage.getItem("iconCurrentBall")   || "player_ball_01";
 window.currentWave   = localStorage.getItem("iconCurrentWave")   || "dart_01";
-window.currentSpider = localStorage.getItem("iconCurrentSpider") || "spider_01";
+window.currentSpider = localStorage.getItem("iconCurrentSpider") || "spider_07";
 window.currentBird   = localStorage.getItem("iconCurrentBird")   || "bird_01";
 window.currentSwing = localStorage.getItem("iconCurrentSwing") || "swing_01";
 const readIconEffectID = (key, max) => {
