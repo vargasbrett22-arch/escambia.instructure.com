@@ -2579,9 +2579,9 @@ this._menuFsBtn = this.add.image(33, 33, "GJ_WebSheet", _0x28fa5b ? "toggleFulls
       this._iconOverlayObjects = [overlay, blocker, titleTxt, titleCursor];
 
       const secretCoinIcon = this.add.image(sw - 60, 35, "GJ_GameSheet03", "GJ_coinsIcon_001.png").setScrollFactor(0).setDepth(105).setScale(0.8);
-      const secretCoinText = this.add.bitmapText(sw - 86, 35, "bigFont", String(window._totalsecretcoins || 0), 32).setOrigin(1, 0.5).setScrollFactor(0).setDepth(105);
+      const secretCoinText = this.add.bitmapText(sw - 86, 35, "bigFont", String(window._totalsecretcoins || 32), 32).setOrigin(1, 0.5).setScrollFactor(0).setDepth(105);
       const userCoinIcon = this.add.image(sw - 60, 80, "GJ_GameSheet03", "GJ_coinsIcon2_001.png").setScrollFactor(0).setDepth(105).setScale(0.8);
-      const userCoinText = this.add.bitmapText(sw - 86, 80, "bigFont", String(window._totalusercoins || 0), 32).setOrigin(1, 0.5).setScrollFactor(0).setDepth(105);
+      const userCoinText = this.add.bitmapText(sw - 86, 80, "bigFont", String(window._totalusercoins || 32), 32).setOrigin(1, 0.5).setScrollFactor(0).setDepth(105);
       this._iconOverlayObjects.push(secretCoinIcon, secretCoinText,userCoinIcon, userCoinText);
 
       const backBtn = this.add.image(50, 48, "GJ_GameSheet03", "GJ_arrow_03_001.png")
@@ -4017,9 +4017,9 @@ this._menuFsBtn = this.add.image(33, 33, "GJ_WebSheet", _0x28fa5b ? "toggleFulls
     };
     const isEveryEnd = (levelId) => levelId === "level_99";
     const levelCoinRequirements = {
-      "level_14": 10,
-      "level_18": 20,
-      "level_20": 30
+      "level_14": 0,
+      "level_18": 0,
+      "level_20": 0,
     };
     const getLevelCoinRequirement = (levelId) => levelCoinRequirements[levelId] || 0;
     const fadeIn = this.add.graphics().setScrollFactor(0).setDepth(200);
