@@ -4983,7 +4983,8 @@ this._menuFsBtn = this.add.image(33, 33, "GJ_WebSheet", _0x28fa5b ? "toggleFulls
           "Default Mini Icon": "Sets player icon in min mode to default.",
           "Safe Mode": "Enables when Noclip or Speedhack are on. Disables level Completion when enabled.",
          "Hide Pause Button": "Hides the pause button during gameplay. Prevents accidental clicks.",
-        "Hide Practice UI": "Hides the checkpoint buttons in practice mode."
+        "Hide Practice UI": "Hides the checkpoint buttons in practice mode.",
+        "ForcePlatformer": "Turns the level into platformer-style movement. Use A/D or the arrow keys to move left and right."
       };
   
       const createInfoButton = (container, x, y, infoTextOrKey, scale) => {
@@ -5285,6 +5286,24 @@ this._menuFsBtn = this.add.image(33, 33, "GJ_WebSheet", _0x28fa5b ? "toggleFulls
           "Hide Practice UI"
         );
   
+        createToggle(container, column2X, startY + (spacingY * 5), "Force Platformer",
+          () => !!this._forcePlatformer,
+          (v) => {
+            // Keep platformer levels forced on; otherwise follow the user's toggle.
+            const enabled = !!window._platLevelActive || !!v;
+            this._forcePlatformer = enabled;
+            window.forcePlatformer = !!v;
+            localStorage.setItem("geose_forcePlatformer", String(!!v));
+            if (window._gameScene && window._gameScene !== this) {
+              window._gameScene._forcePlatformer = enabled;
+            }
+          },
+          null,
+          25,
+          true,
+          "ForcePlatformer"
+        );
+
         createNumberInput(container, column2X, startY + (spacingY * 2), "Respawn Delay (s)",
           () => window.respawnDelay,
           (v) => { window.respawnDelay = v; },
